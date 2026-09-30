@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Expo / React Native
+.expo/
+.expo-shared/
+dist/
+web-build/
+
+# Next.js
+.next/
+out/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Credentials / private keys
+client_secret_*.json
+serviceAccountKey.json
+google-services.json
+GoogleService-Info.plist
+*.pem
+*.key
+*.p12
+*.p8
+
+# Local Android / iOS build files
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/.cxx/
+ios/Pods/
+ios/build/
+ios/DerivedData/
+
+# Logs / debug output
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary / cache files
+*.tmp
+*.temp
+*.swp
+*.swo
+.cache/
+.turbo/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Local signing material
+*.jks
+*.keystore
+
+# Test / coverage output
+coverage/
+
+# Supabase local development output
+supabase/.branches/
+supabase/.temp/
+node_modules

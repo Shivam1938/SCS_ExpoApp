@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Sunshine Computer Solution",
+    "slug": "SCS",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": [
+      "expo-status-bar",
+      "expo-splash-screen",
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Sunshine Computer Solution to select photos for your booking."
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-notifications",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Sunshine Computer Solution to use your location."
+        }
+      ]
+    ],
+    "scheme": "fixora",
+    "android": {
+      "package": "com.sunshine.scs"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "04873b85-dac3-4967-b0bd-5550de3e422e"
+      }
+    }
+  }
+}
