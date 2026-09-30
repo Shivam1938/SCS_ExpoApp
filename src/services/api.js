@@ -221,7 +221,11 @@ export const api = {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name.trim() } },
+        // options: { data: { full_name: name.trim() } },
+        options: {
+  data: { full_name: name.trim() },
+  emailRedirectTo: "fixora://auth-callback",
+},
       });
       if (error) return { ok: false, error: authMessage(error) };
       if (data.session && data.user) {
@@ -263,14 +267,29 @@ export const api = {
       return { ok: false, error: authMessage(error) };
     }
   },
+  // async resetPassword(email) {
+  //   try {
+  //     const { error } = await supabase.auth.resetPasswordForEmail(email);
+  //     return error ? { ok: false, error: authMessage(error) } : { ok: true };
+  //   } catch (error) {
+  //     return { ok: false, error: authMessage(error) };
+  //   }
+  // },
+
   async resetPassword(email) {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      return error ? { ok: false, error: authMessage(error) } : { ok: true };
-    } catch (error) {
-      return { ok: false, error: authMessage(error) };
-    }
-  },
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    
+      redirectTo: "fixora://reset-password",
+    });
+
+    return error ? { ok: false, error: authMessage(error) } : { ok: true };
+  } catch (error) {
+    return { ok: false, error: authMessage(error) };
+  }
+},
+
+
   signOut: () => supabase.auth.signOut(),
   getSession: async () => (await supabase.auth.getSession()).data.session,
   async getProfile() {
