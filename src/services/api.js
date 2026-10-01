@@ -515,6 +515,18 @@ export const api = {
     if (error) throw error;
     return data;
   },
+  async updateTechnicianProfile({ name, roleTitle, about, skills, yearsExperience, phone }) {
+    const { data, error } = await supabase.rpc('update_my_technician_profile', {
+      p_name: name,
+      p_role_title: roleTitle,
+      p_about: about || '',
+      p_skills: skills || [],
+      p_years_experience: yearsExperience || 0,
+      p_phone: phone || '',
+    });
+    if (error) throw error;
+    return data;
+  },
   async getTechnicianBookings() {
     const { data, error } = await supabase.from('bookings').select(BOOKING_SELECT).or('status.eq.finding_technician,technician_id.not.is.null').order('scheduled_date', { ascending: true }).order('scheduled_time', { ascending: true });
     if (error) throw error;

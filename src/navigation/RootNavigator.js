@@ -19,6 +19,7 @@ import BookingConfirmedScreen from '../screens/BookingConfirmedScreen';
 import TrackBookingScreen from '../screens/TrackBookingScreen';
 import TechnicianProfileScreen from '../screens/TechnicianProfileScreen';
 import TechnicianReviewsScreen from '../screens/TechnicianReviewsScreen';
+import TechnicianEditProfileScreen from '../screens/TechnicianEditProfileScreen';
 import RateServiceScreen from '../screens/RateServiceScreen';
 import AddressesScreen from '../screens/AddressesScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
@@ -138,6 +139,7 @@ export default function RootNavigator({ onReady }) {
         <Stack.Screen name="TrackBooking" children={(props) => <ThemeAware component={TrackBookingScreen} {...props} />} />
         <Stack.Screen name="TechnicianProfile" children={(props) => <ThemeAware component={TechnicianProfileScreen} {...props} />} />
         <Stack.Screen name="TechnicianReviews" children={(props) => <ThemeAware component={TechnicianReviewsScreen} {...props} />} />
+        <Stack.Screen name="TechnicianEditProfile" children={(props) => <ThemeAware component={TechnicianEditProfileScreen} {...props} />} />
         <Stack.Screen name="TechnicianBookingDetails" children={(props) => <ThemeAware component={TechnicianBookingDetailsScreen} {...props} />} />
         <Stack.Screen name="RateService" children={(props) => <ThemeAware component={RateServiceScreen} {...props} />} />
         <Stack.Screen name="Addresses" children={(props) => <ThemeAware component={AddressesScreen} {...props} />} />

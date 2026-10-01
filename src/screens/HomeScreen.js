@@ -94,7 +94,7 @@ export default function HomeScreen({ navigation }) {
             <Ionicons name="location-outline" size={16} color={colors.orange} style={{ marginLeft: 10 }} />
             <ThemedText numberOfLines={1} style={{ color: colors.muted, marginLeft: 3, flexShrink: 1 }}>{locationLabel}</ThemedText>
           </Press>
-          <Press onPress={() => navigation.navigate('Profile')} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#2A3640', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <Press onPress={() => navigation.navigate('Profile')} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: colors.input, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             {user.avatarUrl ? <Image source={{ uri: user.avatarUrl }} style={{ width: 44, height: 44 }} /> : <ThemedText style={{ color: '#fff', fontWeight: '700' }}>{user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</ThemedText>}
           </Press>
         </View>
@@ -108,7 +108,7 @@ export default function HomeScreen({ navigation }) {
             <Ionicons name="search" size={20} color={colors.teal} />
             <ThemedTextInput underlineColorAndroid="transparent" value={q} onChangeText={setQ} placeholder="Search computer, CCTV, laptop..."
               placeholderTextColor={colors.muted} style={{ flex: 1, marginLeft: 10, fontSize: 15, paddingVertical: 0 }} />
-            {q ? <Ionicons name="close-circle" size={18} color="#9AA3A9" onPress={() => setQ('')} /> : null}
+            {q ? <Ionicons name="close-circle" size={18} color={colors.muted} onPress={() => setQ('')} /> : null}
           </View>
         </View>
 
@@ -134,7 +134,7 @@ export default function HomeScreen({ navigation }) {
       onPress={() => navigation.navigate('AllServices')}
       style={{
         marginTop: 18,
-        height: 160,
+        height: 126,
         borderRadius: radius.lg,
         overflow: 'hidden',
         backgroundColor: colors.orange,
@@ -143,7 +143,7 @@ export default function HomeScreen({ navigation }) {
       {homeBannerUrl ? (
         <Image
           source={{ uri: homeBannerUrl }}
-          style={{ width: '100%', height: '100%', transform: [{ scale: 1.15 }] }}
+          style={{ width: '100%', height: '100%', transform: [{ scale: 1.01 }] }}
           resizeMode="cover"
         />
       ) : (

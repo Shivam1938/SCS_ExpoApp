@@ -83,7 +83,7 @@ export default function ProfileScreen({ navigation }) {
                 <ThemedText numberOfLines={1} style={{ fontSize: 20, fontWeight: '800', color: colors.text, flexShrink: 1 }}>{user.name || 'Guest'}</ThemedText>
                 <ThemedText numberOfLines={1} style={{ color: colors.muted, marginTop: 4, fontSize: 15 }}>{user.phone || 'Phone number not added'}</ThemedText>
                 <Press accessibilityRole="button" accessibilityLabel="Edit profile" onPress={() => navigation.navigate('AddPhone')} style={{ marginTop: 7, paddingVertical: 3, paddingHorizontal: 2 }}>
-                  <ThemedText style={{ color: '#1769AA', fontSize: 14, fontWeight: '700' }}>Edit</ThemedText>
+                  <ThemedText style={{ color: colors.teal, fontSize: 14, fontWeight: '700' }}>Edit</ThemedText>
                 </Press>
               </View>
             </View>
@@ -94,10 +94,22 @@ export default function ProfileScreen({ navigation }) {
               <ThemedText style={{ color: '#FFE3D0', marginTop: 6, fontSize: 15 }}>Priority support and 10% off every visit</ThemedText>
             </View>
             <View style={{ backgroundColor: colors.surface, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 999 }}>
-              <ThemedText style={{ color: '#C24A00', fontWeight: '700' }}>Coming soon</ThemedText>
+              <ThemedText style={{ color: colors.orange, fontWeight: '700' }}>Coming soon</ThemedText>
             </View>
           </View>
         </FadeIn>
+        {user.role === 'technician' ? (
+          <Press onPress={() => navigation.navigate('TechnicianEditProfile')} style={{ marginTop: 14 }}>
+            <Card style={{ flexDirection: 'row', alignItems: 'center', padding: 14 }}>
+              <IconBox name="create-outline" tint={colors.tealSoft} color={colors.teal} size={48} />
+              <View style={{ flex: 1, marginLeft: 16 }}>
+                <ThemedText style={{ fontSize: 17, fontWeight: '700', color: colors.text }}>Edit professional details</ThemedText>
+                <ThemedText style={{ color: colors.muted, marginTop: 3 }}>Update your role, skills, experience and About section.</ThemedText>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.text} />
+            </Card>
+          </Press>
+        ) : null}
         {rows.map((r, i) => (
           <FadeIn key={r.l} delay={100 + i * 70}>
             <Press onPress={r.go} style={{ marginTop: 12 }}>

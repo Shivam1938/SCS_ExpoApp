@@ -55,7 +55,7 @@ export default function TrackBookingScreen({ navigation, route }) {
       <Header title="Track booking" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 30 }}>
         <Card style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconBox name="construct-outline" size={60} tint={colors.teal} color="#fff" />
+          <IconBox name="construct-outline" size={60} tint={colors.teal} color={colors.muted} />
           <View style={{ flex: 1, marginLeft: 14 }}>
             <ThemedText style={{ fontSize: 18, fontWeight: '700' }}>{b.service}</ThemedText>
             <ThemedText style={{ color: colors.muted, marginTop: 4 }}>{b.id}</ThemedText>
@@ -121,8 +121,8 @@ export default function TrackBookingScreen({ navigation, route }) {
                   <View style={{ flexDirection: 'row', minHeight: 70 }}>
                     <View style={{ alignItems: 'center', width: 40 }}>
                       <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: done ? colors.teal : active ? '#fff' : '#E6E1F3', borderWidth: active ? 3 : 0, borderColor: colors.orange }}>
-                        {done && <Ionicons name="checkmark" size={22} color="#fff" />}
+                        backgroundColor: done ? colors.teal : active ? colors.surface : colors.purpleSoft, borderWidth: active ? 3 : 0, borderColor: colors.orange }}>
+                        {done && <Ionicons name="checkmark" size={22} color={colors.muted} />}
                         {active && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: colors.orange }} />}
                       </View>
                       {i < LABELS.length - 1 && <View style={{ flex: 1, width: 3, backgroundColor: done ? colors.teal : colors.border }} />}
@@ -141,10 +141,10 @@ export default function TrackBookingScreen({ navigation, route }) {
         {b.technician ? (
           <Press onPress={() => navigation.navigate('TechnicianProfile', { technician: b.technician })}>
             <Card style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
-              <View style={{ width: 62, height: 62, borderRadius: 31, backgroundColor: '#2A3640', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <View style={{ width: 62, height: 62, borderRadius: 31, backgroundColor: colors.input, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {b.technician.avatar_url
                   ? <Image source={{ uri: b.technician.avatar_url }} style={{ width: 62, height: 62 }} />
-                  : <Ionicons name="person" size={30} color="#fff" />}
+                  : <Ionicons name="person" size={30} color={colors.muted} />}
               </View>
               <View style={{ flex: 1, marginLeft: 14 }}>
                 <ThemedText style={{ fontSize: 17, fontWeight: '700' }}>{b.technician.name}</ThemedText>

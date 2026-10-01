@@ -42,6 +42,22 @@ export default function TechnicianHomeScreen({ navigation }) {
         <View><ThemedText style={{ color: colors.muted, fontSize: 14 }}>Good to see you</ThemedText><ThemedText style={[styles.h1, { color: colors.text }]}>{user.name || 'Technician'}</ThemedText></View>
         <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.orangeSoft, alignItems: 'center', justifyContent: 'center' }}><Ionicons name="construct-outline" size={24} color={colors.orange} /></View>
       </View>
+      {(!technician?.name || !technician?.role_title || !technician?.about || !technician?.skills?.length || !technician?.phone) ? (
+        <Press onPress={() => navigation.navigate('TechnicianEditProfile')} style={{ marginTop: 16 }}>
+          <Card style={{ padding: 16, borderColor: colors.teal }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: colors.tealSoft, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="person-add-outline" size={23} color={colors.teal} />
+              </View>
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <ThemedText style={{ color: colors.text, fontSize: 16, fontWeight: '900' }}>Complete your profile</ThemedText>
+                <ThemedText style={{ color: colors.muted, marginTop: 3 }}>It takes 2 minutes. Add your skills, experience and professional details.</ThemedText>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.teal} />
+            </View>
+          </Card>
+        </Press>
+      ) : null}
       <View style={{ marginTop: 18, backgroundColor: colors.teal, borderRadius: radius.lg, padding: 18 }}>
         <ThemedText style={{ color: '#fff', fontSize: 18, fontWeight: '900' }}>New service requests</ThemedText>
         <ThemedText style={{ color: '#D8F5F7', marginTop: 5 }}>Accept a request to reserve it for you.</ThemedText>

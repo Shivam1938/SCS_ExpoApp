@@ -42,8 +42,8 @@ export default function RateServiceScreen({ navigation, route }) {
             <ThemedText style={{ fontSize: 18, fontWeight: '700' }}>{booking?.service || 'Service'}</ThemedText>
             <ThemedText style={{ color: colors.muted, marginTop: 4 }}>Completed by {booking?.technician?.name || 'your technician'}</ThemedText>
           </View>
-          <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: '#2A3640', alignItems: 'center', justifyContent: 'center' }}>
-            <Ionicons name="person" size={22} color="#fff" />
+          <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: colors.input, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="person" size={22} color={colors.muted} />
           </View>
         </View>
         <ThemedText style={{ fontSize: 22, fontWeight: '700', textAlign: 'center', marginTop: 40 }}>How was your experience?</ThemedText>
@@ -58,7 +58,7 @@ export default function RateServiceScreen({ navigation, route }) {
           {tagList.map((t) => {
             const on = tags.includes(t);
             return (
-              <Press key={t} onPress={() => toggle(t)} style={{ backgroundColor: on ? colors.orangeSoft : '#fff', borderColor: on ? colors.orange : 'transparent', borderWidth: 1, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10, marginRight: 10, marginBottom: 10 }}>
+              <Press key={t} onPress={() => toggle(t)} style={{ backgroundColor: on ? colors.orangeSoft : colors.surface, borderColor: on ? colors.orange : 'transparent', borderWidth: 1, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10, marginRight: 10, marginBottom: 10 }}>
                 <ThemedText style={{ fontSize: 16 }}>{t}</ThemedText>
               </Press>
             );

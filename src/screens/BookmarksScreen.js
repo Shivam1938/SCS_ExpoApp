@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ActivityIndicator, Alert, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, Header, Card, IconBox, Press, ThemedText } from '../components/ui';
 import { colors } from '../theme';
@@ -33,7 +33,13 @@ export default function BookmarksScreen({ navigation }) {
             </Press>
           </Card> : savedServices.map((service) => <Card key={service.id} style={{ flexDirection: 'row', alignItems: 'center', padding: 14, marginBottom: 12 }}>
               <Press onPress={() => navigation.navigate('ServiceDetail', { id: service.id })} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-              <IconBox name={service.icon} tint={service.tint} color={service.color} size={54} />
+              {service.image_url ? (
+                <View style={{ width: 54, height: 54, borderRadius: 14, overflow: 'hidden', backgroundColor: service.tint || colors.tealSoft }}>
+                  <Image source={{ uri: service.image_url }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                </View>
+              ) : (
+                <IconBox name={service.icon} tint={service.tint} color={service.color} size={54} />
+              )}
               <View style={{ flex: 1, marginLeft: 14 }}>
                 <ThemedText style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>{service.name}</ThemedText>
                 <ThemedText style={{ color: colors.muted, marginTop: 4 }}>From ₹{service.price}</ThemedText>

@@ -33,8 +33,8 @@ export default function TechnicianProfileScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={{ padding: 20, alignItems: 'stretch' }}>
         <FadeIn style={{ alignItems: 'center' }}>
           <View style={{ width: 130, height: 130, borderRadius: 65, borderWidth: 3, borderColor: colors.teal, padding: 4 }}>
-            <View style={{ flex: 1, borderRadius: 60, backgroundColor: '#2A3640', alignItems: 'center', justifyContent: 'center' }}>
-              {t.avatarUrl ? <Image source={{ uri: t.avatarUrl }} style={{ width: '100%', height: '100%', borderRadius: 60 }} /> : <Ionicons name="person" size={60} color="#fff" />}
+            <View style={{ flex: 1, borderRadius: 60, backgroundColor: colors.input, alignItems: 'center', justifyContent: 'center' }}>
+              {t.avatarUrl ? <Image source={{ uri: t.avatarUrl }} style={{ width: '100%', height: '100%', borderRadius: 60 }} /> : <Ionicons name="person" size={60} color={colors.muted} />}
             </View>
           </View>
           <ThemedText style={{ fontSize: 26, fontWeight: '800', marginTop: 16 }}>{t.name}</ThemedText>
@@ -82,7 +82,7 @@ export default function TechnicianProfileScreen({ navigation, route }) {
           <ThemedText style={[styles.h2, { color: colors.text, marginTop: 22 }]}>Skills</ThemedText>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 }}>
             {t.skills.map((s, i) => (
-              <View key={s} style={{ backgroundColor: i % 2 ? '#E0F0FA' : colors.purpleSoft, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 999, marginRight: 10, marginBottom: 10 }}>
+              <View key={s} style={{ backgroundColor: i % 2 ? colors.tealSoft : colors.purpleSoft, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 999, marginRight: 10, marginBottom: 10 }}>
                 <ThemedText style={{ fontSize: 16 }}>{s}</ThemedText>
               </View>
             ))}
