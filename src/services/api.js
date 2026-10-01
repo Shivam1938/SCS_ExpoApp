@@ -602,6 +602,29 @@ export const api = {
     }));
   },
 
+  // ---------- APP CONTENT ----------
+  async getAppContent() {
+    const { data, error } = await supabase
+      .from('app_content')
+      .select('content_key, title, content, updated_at')
+      .order('content_key');
+    if (error) throw error;
+    return (data || []).reduce((acc, item) => {
+      acc[item.content_key] = item;
+      return acc;
+    }, {});
+  },
+
+  async getContactSettings() {
+    const { data, error } = await supabase
+      .from('contact_settings')
+      .select('phone, whatsapp, email, support_email, address, working_hours, website')
+      .eq('id', 1)
+      .maybeSingle();
+    if (error) throw error;
+    return data || {};
+  },
+
   // ---------- ALERTS ----------
   async getAlerts() {
     const { data, error } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(50);
