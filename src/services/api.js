@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STATUS = {
   finding_technician: 'Finding technician',
@@ -44,13 +45,25 @@ const ensureProfile = async (user, name, requestedRole) => {
 
   const { data: existingProfile, error: readError } = await supabase
     .from("profiles")
-    .select("id, role")
+    .select("id, role, full_name")
     .eq("id", user.id)
     .maybeSingle();
 
   if (readError) throw readError;
 
   if (existingProfile) {
+    const existingName = String(existingProfile.full_name || '').trim();
+    const isPlaceholder = !existingName || ['customer', 'user', 'guest'].includes(existingName.toLowerCase());
+    if (isPlaceholder && fullName && !['Customer', 'User', 'Guest'].includes(fullName)) {
+      const { data: repaired, error: repairError } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName })
+        .eq('id', user.id)
+        .select('id, role, full_name')
+        .single();
+      if (repairError) throw repairError;
+      return repaired;
+    }
     return existingProfile;
   }
 
@@ -129,6 +142,7 @@ const mapBooking = (b) => {
     partsEstimate: b.parts_estimate,
     discount: b.discount,
     total: b.total,
+    finalAmountConfirmed: b.final_amount_confirmed === true,
     photos: Array.isArray(b.photos) ? b.photos : [],
   };
 };
@@ -257,9 +271,40 @@ export const api = {
   async updateEmail(email) {
     const nextEmail = String(email || '').trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail)) throw new Error('Enter a valid email address.');
-    const { data, error } = await supabase.auth.updateUser({ email: nextEmail });
+
+    let role = 'customer';
+    try {
+      const profile = await this.getProfile();
+      if (profile?.role === 'technician') role = 'technician';
+    } catch {}
+
+    const { data, error } = await supabase.auth.updateUser(
+      { email: nextEmail },
+      { emailRedirectTo: 'fixora://email-change' },
+    );
     if (error) throw error;
+
+    await AsyncStorage.setItem(
+      'scs-pending-email-change',
+      JSON.stringify({ email: nextEmail, role }),
+    );
+
     return data?.user || null;
+  },
+
+  async getPendingEmailChange() {
+    try {
+      const raw = await AsyncStorage.getItem('scs-pending-email-change');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async clearPendingEmailChange() {
+    try {
+      await AsyncStorage.removeItem('scs-pending-email-change');
+    } catch {}
   },
   signOut: () => supabase.auth.signOut(),
   getSession: async () => (await supabase.auth.getSession()).data.session,
@@ -419,7 +464,7 @@ export const api = {
     const phone = String(bookingPhone || profile?.phone || '').trim();
     if (phone.replace(/\D/g, '').length < 10) throw new Error('Please add a valid phone number to your profile before booking.');
     const addressLine = [address.line, address.city, address.pincode].filter(Boolean).join(', ');
-    const payload = { user_id, service_id: serviceId, scheduled_date: date, scheduled_time: time, address_id: address.id, address_line: addressLine, phone, notes: note || null, photos: [], payment_method: 'cash', payment_status: 'pending', service_fee: null, parts_estimate: null, discount: null, total: null, client_request_id: isValidUuid(clientRequestId) ? clientRequestId : null };
+    const payload = { user_id, service_id: serviceId, scheduled_date: date, scheduled_time: time, address_id: address.id, address_line: addressLine, phone, notes: note || null, photos: [], payment_method: 'cash', payment_status: 'pending', service_fee: null, parts_estimate: null, discount: null, total: null, final_amount_confirmed: false, client_request_id: isValidUuid(clientRequestId) ? clientRequestId : null };
     let { data, error } = await supabase.from('bookings').insert(payload).select(BOOKING_SELECT).single();
     let existingBooking = false;
     if (error?.code === '23505' && clientRequestId) {
@@ -500,7 +545,7 @@ export const api = {
     const discountValue = Number(discount || 0);
     if (!Number.isFinite(fee) || fee < 0 || !Number.isFinite(partsValue) || partsValue < 0 || !Number.isFinite(discountValue) || discountValue < 0) throw new Error('Enter valid charge amounts.');
     const total = Math.max(0, fee + partsValue - discountValue);
-    const { data, error } = await supabase.from('bookings').update({ service_fee: fee, parts_estimate: partsValue, discount: discountValue, total }).eq('id', dbId).eq('technician_id', technician.id).select(BOOKING_SELECT).maybeSingle();
+    const { data, error } = await supabase.from('bookings').update({ service_fee: fee, parts_estimate: partsValue, discount: discountValue, total, final_amount_confirmed: true }).eq('id', dbId).eq('technician_id', technician.id).select(BOOKING_SELECT).maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('This booking is no longer assigned to you.');
     return mapBooking((await attachBookingAddresses([data]))[0]);
@@ -508,10 +553,41 @@ export const api = {
   async markPaymentReceived(dbId) {
     const technician = await this.getTechnicianProfile();
     if (!technician?.id) throw new Error('Your technician profile is not ready yet.');
-    const { data, error } = await supabase.from('bookings').update({ payment_status: 'paid' }).eq('id', dbId).eq('technician_id', technician.id).eq('status', 'completed').eq('payment_status', 'pending').not('total', 'is', null).select(BOOKING_SELECT).maybeSingle();
+    const { data, error } = await supabase.from('bookings').update({ payment_status: 'paid' }).eq('id', dbId).eq('technician_id', technician.id).eq('status', 'completed').eq('payment_status', 'pending').eq('final_amount_confirmed', true).not('total', 'is', null).select(BOOKING_SELECT).maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Payment is already recorded or the final amount has not been added.');
     return mapBooking((await attachBookingAddresses([data]))[0]);
+  },
+
+  // ---------- TECHNICIAN REVIEWS ----------
+  async getTechnicianReviews() {
+    const technician = await this.getTechnicianProfile();
+    if (!technician?.id) return [];
+
+    const { data: reviews, error } = await supabase
+      .from('reviews')
+      .select('id, user_id, booking_id, rating, comment, tags, created_at')
+      .eq('technician_id', technician.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    const rows = reviews || [];
+    const userIds = [...new Set(rows.map((review) => review.user_id).filter(Boolean))];
+
+    let profiles = [];
+    if (userIds.length) {
+      const { data, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds);
+      if (profileError) throw profileError;
+      profiles = data || [];
+    }
+
+    return rows.map((review) => ({
+      ...review,
+      reviewer: profiles.find((profile) => profile.id === review.user_id) || null,
+    }));
   },
 
   // ---------- ALERTS ----------

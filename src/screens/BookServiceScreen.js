@@ -143,7 +143,7 @@ const saveBookingPhone = () => {
     try {
       const result = await api.createBooking({ serviceId: s.id, date: dateToISO(schedule), time: formatTime(schedule), note, addressId: bookingAddress.id, phone, photos, clientRequestId: clientRequestIdRef.current });
       addBooking(result);
-      navigation.reset({ index: 1, routes: [{ name: 'Main' }, { name: 'BookingConfirmed', params: { id: result.id, service: result.service, when: result.when, address: result.address, photoUploadError: result.photoUploadError } }] });
+      navigation.reset({ index: 1, routes: [{ name: 'Main' }, { name: 'BookingConfirmed', params: { id: result.id, service: result.service, when: result.when, address: result.address, startingPrice: s.price, photoUploadError: result.photoUploadError } }] });
     } catch (error) {
       continueRef.current = false;
       Alert.alert('Booking failed', error?.message || 'We could not create your booking. Please try again.');
@@ -191,7 +191,7 @@ const saveBookingPhone = () => {
             <IconBox name={s.icon} size={64} tint="#fff" />
             <View style={{ flex: 1, marginLeft: 14 }}>
               <ThemedText style={{ fontSize: 18, fontWeight: '700' }}>{s.name}</ThemedText>
-              <ThemedText style={{ color: colors.teal, fontWeight: '700', fontSize: 17, marginTop: 4 }}>From ₹{s.price}</ThemedText>
+              <ThemedText style={{ color: colors.teal, fontWeight: '700', fontSize: 17, marginTop: 4 }}>Starting from ₹{s.price}</ThemedText>
             </View>
             <ThemedText style={{ backgroundColor: colors.orangeSoft, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, fontWeight: '700' }}>{s.rating}</ThemedText>
           </View>
@@ -285,6 +285,10 @@ const saveBookingPhone = () => {
         <ThemedTextInput underlineColorAndroid="transparent" value={note} onChangeText={setNote} placeholder="Tell us anything else" placeholderTextColor={colors.muted}
           style={{ backgroundColor: colors.surface, borderRadius: radius.md, padding: 16, marginTop: 16, fontSize: 16 }} />
         {!scheduleIsValid && <ThemedText style={{ color: '#B33B32', marginTop: 12 }}>Choose a future date and time to continue.</ThemedText>}
+        <View style={{ backgroundColor: colors.tealSoft, borderRadius: radius.lg, padding: 15, marginTop: 18 }}>
+          <ThemedText style={{ color: colors.text, fontSize: 17, fontWeight: '800' }}>Starting from ₹{Number(s.price || 0).toLocaleString('en-IN')}</ThemedText>
+          <ThemedText style={{ color: colors.muted, marginTop: 5, lineHeight: 20 }}>The final amount is decided by the technician after inspection and confirmation with you.</ThemedText>
+        </View>
         <Button title={creatingBooking ? "Creating booking…" : "Confirm booking"} variant="teal" style={{ marginTop: 18 }}
           disabled={addressesLoading || creatingBooking || !bookingAddress || !hasPhone || !scheduleIsValid} onPress={confirmBooking} />
       </ScrollView>

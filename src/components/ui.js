@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, shadow } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
 export const ThemedText = React.forwardRef(function ThemedText(
   { style, ...props },
@@ -329,12 +330,13 @@ export function Screen({
 }
 
 export function Logo({ size = 22 }) {
+  const { resolved } = useTheme();
   return (
     <Image
-      source={require('../logo/logo.png')}
+      source={resolved === 'dark' ? require('../logo/logo-dark.png') : require('../logo/logo.png')}
       style={{
-        width: size * 5,
-        height: size * 2,
+        width: size * 5.25,
+        height: size * 2.1,
         resizeMode: 'contain',
       }}
     />

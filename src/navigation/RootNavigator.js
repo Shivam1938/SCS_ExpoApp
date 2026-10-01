@@ -18,6 +18,7 @@ import BookServiceScreen from '../screens/BookServiceScreen';
 import BookingConfirmedScreen from '../screens/BookingConfirmedScreen';
 import TrackBookingScreen from '../screens/TrackBookingScreen';
 import TechnicianProfileScreen from '../screens/TechnicianProfileScreen';
+import TechnicianReviewsScreen from '../screens/TechnicianReviewsScreen';
 import RateServiceScreen from '../screens/RateServiceScreen';
 import AddressesScreen from '../screens/AddressesScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
@@ -39,7 +40,7 @@ const getAuthParamsFromUrl = (url) => {
   const fragment = url?.includes('#') ? url.split('#')[1] : url?.includes('?') ? url.split('?')[1] : '';
   if (!fragment) return null;
   const params = new URLSearchParams(fragment);
-  return { accessToken: params.get('access_token'), refreshToken: params.get('refresh_token'), code: params.get('code'), type: params.get('type') };
+  return { accessToken: params.get('access_token'), refreshToken: params.get('refresh_token'), code: params.get('code'), tokenHash: params.get('token_hash'), type: params.get('type') };
 };
 
 export default function RootNavigator({ onReady }) {
@@ -50,20 +51,43 @@ export default function RootNavigator({ onReady }) {
   useEffect(() => {
     let mounted = true;
     const exchange = async (url, kind) => {
-      const prefix = kind === 'reset' ? 'fixora://reset-password' : 'fixora://auth-callback';
+      const prefix =
+        kind === 'reset'
+          ? 'fixora://reset-password'
+          : kind === 'email'
+            ? 'fixora://email-change'
+            : 'fixora://auth-callback';
       if (!url?.startsWith(prefix)) return false;
+
       try {
         const params = getAuthParamsFromUrl(url);
+
+        if (params?.tokenHash && params?.type === 'email_change') {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: params.tokenHash,
+            type: 'email_change',
+          });
+          return !error;
+        }
+
         if (!params) return false;
+
         if (params.code) {
           const { error } = await supabase.auth.exchangeCodeForSession(params.code);
           return !error;
         }
+
         if (params.accessToken && params.refreshToken) {
-          const { error } = await supabase.auth.setSession({ access_token: params.accessToken, refresh_token: params.refreshToken });
+          const { error } = await supabase.auth.setSession({
+            access_token: params.accessToken,
+            refresh_token: params.refreshToken,
+          });
           return !error;
         }
-      } catch (error) { console.warn(`Could not process ${kind} link:`, error?.message); }
+      } catch (error) {
+        console.warn(`Could not process ${kind} link:`, error?.message);
+      }
+
       return false;
     };
     const setup = async () => {
@@ -71,6 +95,7 @@ export default function RootNavigator({ onReady }) {
         const initialUrl = await Linking.getInitialURL();
         if (await exchange(initialUrl, 'reset')) { if (mounted) setInitial('ResetPassword'); return; }
         if (await exchange(initialUrl, 'auth')) { if (mounted) setInitial('Login'); return; }
+        if (await exchange(initialUrl, 'email')) { if (mounted) setInitial('Login'); return; }
         const session = await api.getSession();
         if (mounted) setInitial(session ? 'Main' : 'Welcome');
       } catch { if (mounted) setInitial('Welcome'); }
@@ -90,7 +115,8 @@ export default function RootNavigator({ onReady }) {
 
     const subscription = Linking.addEventListener('url', async ({ url }) => {
       if (await exchange(url, 'reset') && navigationRef.current) return navigationRef.current.navigate('ResetPassword');
-      if (await exchange(url, 'auth') && navigationRef.current) navigationRef.current.navigate('Login');
+      if (await exchange(url, 'auth') && navigationRef.current) return navigationRef.current.navigate('Login');
+      if (await exchange(url, 'email') && navigationRef.current) return navigationRef.current.navigate('Login');
     });
     return () => { mounted = false; subscription.remove(); notificationSubscription.remove(); authListener.subscription.unsubscribe(); };
   }, []);
@@ -111,6 +137,7 @@ export default function RootNavigator({ onReady }) {
         <Stack.Screen name="BookingConfirmed" children={(props) => <ThemeAware component={BookingConfirmedScreen} {...props} />} options={{ gestureEnabled: false, animation: 'fade' }} />
         <Stack.Screen name="TrackBooking" children={(props) => <ThemeAware component={TrackBookingScreen} {...props} />} />
         <Stack.Screen name="TechnicianProfile" children={(props) => <ThemeAware component={TechnicianProfileScreen} {...props} />} />
+        <Stack.Screen name="TechnicianReviews" children={(props) => <ThemeAware component={TechnicianReviewsScreen} {...props} />} />
         <Stack.Screen name="TechnicianBookingDetails" children={(props) => <ThemeAware component={TechnicianBookingDetailsScreen} {...props} />} />
         <Stack.Screen name="RateService" children={(props) => <ThemeAware component={RateServiceScreen} {...props} />} />
         <Stack.Screen name="Addresses" children={(props) => <ThemeAware component={AddressesScreen} {...props} />} />

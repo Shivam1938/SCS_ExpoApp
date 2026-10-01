@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import { Alert, Image, ScrollView, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,14 +13,6 @@ export default function ProfileScreen({ navigation }) {
   const { mode, resolved, setMode } = useTheme();
   const [loggingOut, setLoggingOut] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [technicianStats, setTechnicianStats] = useState(null);
-  useFocusEffect(useCallback(() => {
-    refreshProfile().then((profile) => {
-      if (profile?.role === 'technician') return api.getTechnicianProfile().then(setTechnicianStats);
-      setTechnicianStats(null);
-    }).catch((error) => console.warn('profile refresh failed', error?.message));
-    return undefined;
-  }, [refreshProfile]));
   const changeProfilePhoto = async () => {
     if (uploadingPhoto) return;
     setUploadingPhoto(true);
@@ -107,27 +98,6 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
         </FadeIn>
-        {user.role === 'technician' && technicianStats ? (
-          <FadeIn delay={90}>
-            <Card style={{ marginTop: 14, padding: 16 }}>
-              <ThemedText style={{ color: colors.text, fontSize: 18, fontWeight: '800' }}>Professional stats</ThemedText>
-              <View style={{ flexDirection: 'row', marginTop: 16 }}>
-                <View style={{ flex: 1, alignItems: 'center' }}>
-                  <ThemedText style={{ color: colors.teal, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.jobs_completed || 0)}</ThemedText>
-                  <ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Jobs completed</ThemedText>
-                </View>
-                <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
-                  {technicianStats.rating != null && (technicianStats.reviews_count > 0 || technicianStats.rating_is_admin_set) ? <><ThemedText style={{ color: colors.orange, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.rating).toFixed(1)} ★</ThemedText><ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Rating</ThemedText></> : <><ThemedText style={{ color: colors.muted, fontSize: 18, fontWeight: '800' }}>Not rated</ThemedText><ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Rating</ThemedText></>}
-                </View>
-                <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
-                  <ThemedText style={{ color: colors.teal, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.reviews_count || 0)}</ThemedText>
-                  <ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Reviews</ThemedText>
-                </View>
-              </View>
-              {technicianStats.years_experience > 0 ? <ThemedText style={{ color: colors.muted, marginTop: 14, textAlign: 'center' }}>{technicianStats.years_experience} years experience</ThemedText> : null}
-            </Card>
-          </FadeIn>
-        ) : null}
         {rows.map((r, i) => (
           <FadeIn key={r.l} delay={100 + i * 70}>
             <Press onPress={r.go} style={{ marginTop: 12 }}>

@@ -82,13 +82,13 @@ export default function TrackBookingScreen({ navigation, route }) {
             <ThemedText>Booking date: {b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN') : '—'}</ThemedText>
             <ThemedText>Service date/time: {b.when}</ThemedText>
             <ThemedText>Address: {b.address}</ThemedText>
-            {b.total == null ? (
+            {!b.finalAmountConfirmed || b.total == null ? (
               <View style={{ marginTop: 8, gap: 7 }}>
                 <ThemedText>Payment status: {String(b.paymentStatus || 'pending').toUpperCase()}</ThemedText>
                 <ThemedText>Payment date: {b.paymentPaidAt ? new Date(b.paymentPaidAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Not paid yet'}</ThemedText>
                 <View style={{ backgroundColor: colors.input, borderRadius: 14, padding: 14, marginTop: 4 }}>
-                  <ThemedText style={{ color: colors.text, fontWeight: '800' }}>Final amount not available yet</ThemedText>
-                  <ThemedText style={{ color: colors.muted, marginTop: 4, lineHeight: 20 }}>The technician will inspect the service and confirm the final charges. The final amount will appear here after it has been added.</ThemedText>
+                  <ThemedText style={{ color: colors.text, fontWeight: '800' }}>Final price: Yet to be confirmed</ThemedText>
+                  <ThemedText style={{ color: colors.muted, marginTop: 4, lineHeight: 20 }}>The technician will inspect the service and confirm the final price. It will appear here once the technician saves the final charges.</ThemedText>
                 </View>
               </View>
             ) : (

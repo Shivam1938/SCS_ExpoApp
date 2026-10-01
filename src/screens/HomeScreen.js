@@ -143,7 +143,7 @@ export default function HomeScreen({ navigation }) {
       {homeBannerUrl ? (
         <Image
           source={{ uri: homeBannerUrl }}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', transform: [{ scale: 1.15 }] }}
           resizeMode="cover"
         />
       ) : (
@@ -251,12 +251,20 @@ export default function HomeScreen({ navigation }) {
             <FlatList horizontal data={popular} keyExtractor={(i) => i.id} showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <Press onPress={() => open(item.serviceId)} style={{ marginRight: 12 }}>
-                  <Card style={{ width: 170 }}>
-                    <IconBox name={item.icon} />
-                    <ThemedText style={{ fontWeight: '700', fontSize: 16, marginTop: 14 }}>{item.name}</ThemedText>
+                  <Card style={{ width: 170, padding: 0, overflow: 'hidden' }}>
+                    <View style={{ height: 88, backgroundColor: item.tint, alignItems: 'center', justifyContent: 'center' }}>
+                      {item.image_url ? (
+                        <Image source={{ uri: item.image_url }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                      ) : (
+                        <Ionicons name={item.icon} size={38} color={item.color} />
+                      )}
+                    </View>
+                    <View style={{ padding: 12 }}>
+                      <ThemedText style={{ fontWeight: '700', fontSize: 16 }}>{item.name}</ThemedText>
                     <ThemedText style={{ color: colors.muted, marginTop: 4 }}>From ₹{item.price.toLocaleString('en-IN')}</ThemedText>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                      <Ionicons name="star" size={15} color={colors.star} /><ThemedText style={{ fontWeight: '700', marginLeft: 4 }}>{item.rating}</ThemedText>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                        <Ionicons name="star" size={15} color={colors.star} /><ThemedText style={{ fontWeight: '700', marginLeft: 4 }}>{item.rating}</ThemedText>
+                      </View>
                     </View>
                   </Card>
                 </Press>

@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
 export default function ChangeEmailScreen({ navigation }) {
-  const { user, setUser } = useApp();
+  const { user } = useApp();
   const [email, setEmail] = useState(user.email || '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -26,7 +26,6 @@ export default function ChangeEmailScreen({ navigation }) {
     setSaving(true);
     try {
       await api.updateEmail(next);
-      setUser((current) => ({ ...current, email: next }));
       Alert.alert('Confirmation required', `A confirmation link has been sent to ${next}. Open that email to complete the change.`, [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (e) {
       setError(e?.message || 'Could not change your email address. Please try again.');

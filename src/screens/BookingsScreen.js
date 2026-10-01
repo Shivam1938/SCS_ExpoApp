@@ -46,7 +46,7 @@ export default function BookingsScreen({ navigation }) {
                   <ThemedText style={{ color: colors.muted, marginTop: 6 }}>{b.when}</ThemedText>
                   <ThemedText style={{ color: colors.muted, marginTop: 4 }}>{b.area}</ThemedText>
                   {b.technician?.name ? <ThemedText style={{ color: colors.teal, marginTop: 6, fontWeight: '700' }}>Technician: {b.technician.name}</ThemedText> : null}
-                  {b.total != null ? <ThemedText style={{ color: colors.text, marginTop: 6, fontWeight: '900' }}>Final amount: ₹{Number(b.total).toLocaleString('en-IN')}</ThemedText> : null}
+                  {b.finalAmountConfirmed && b.total != null ? <ThemedText style={{ color: colors.text, marginTop: 6, fontWeight: '900' }}>Final amount: ₹{Number(b.total).toLocaleString('en-IN')}</ThemedText> : null}
                   <Pill text={b.status} style={{ marginTop: 10 }} tint={b.status === 'Finding technician' ? colors.tealSoft : '#E6EEF3'} />
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={colors.text} />

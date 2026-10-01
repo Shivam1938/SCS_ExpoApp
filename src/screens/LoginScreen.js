@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, Logo, Button, FadeIn, Header, Press, ThemedText, ThemedTextInput } from '../components/ui';
@@ -10,12 +10,24 @@ const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
 export default function LoginScreen({ navigation, route }) {
   const { refresh } = useApp();
-  const selectedRole = route?.params?.role || 'customer';
-  const [email, setEmail] = useState('');
+  const [selectedRole, setSelectedRole] = useState(route?.params?.role || 'customer');
+  const [email, setEmail] = useState(route?.params?.email || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    api.getPendingEmailChange().then((pending) => {
+      if (!active || !pending?.email) return;
+      setEmail(pending.email);
+      if (pending.role === 'technician' || pending.role === 'customer') {
+        setSelectedRole(pending.role);
+      }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const submit = async () => {
     if (loading) return;
@@ -32,6 +44,7 @@ export default function LoginScreen({ navigation, route }) {
     setLoading('');
     if (!result.ok) return setError(result.error);
     await refresh();
+    await api.clearPendingEmailChange();
     navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
     if (result.profileWarning) Alert.alert('Signed in', 'Your account is open, but profile details could not be synced.');
   };

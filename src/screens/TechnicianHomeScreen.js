@@ -12,7 +12,23 @@ export default function TechnicianHomeScreen({ navigation }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const load = useCallback(async () => { setLoading(true); setError(''); try { setBookings(await api.getTechnicianBookings()); } catch (e) { setError(e.message || 'Could not load bookings.'); } finally { setLoading(false); } }, []);
+  const [technician, setTechnician] = useState(null);
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [bookingRows, technicianRow] = await Promise.all([
+        api.getTechnicianBookings(),
+        api.getTechnicianProfile(),
+      ]);
+      setBookings(bookingRows);
+      setTechnician(technicianRow);
+    } catch (e) {
+      setError(e.message || 'Could not load your technician dashboard.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   const available = bookings.filter((b) => b.rawStatus === 'finding_technician' && !b.technicianId);
   const assigned = bookings.filter((b) => b.technicianId);
@@ -31,6 +47,50 @@ export default function TechnicianHomeScreen({ navigation }) {
         <ThemedText style={{ color: '#D8F5F7', marginTop: 5 }}>Accept a request to reserve it for you.</ThemedText>
         <View style={{ flexDirection: 'row', marginTop: 16, alignItems: 'center' }}><ThemedText style={{ color: '#fff', fontSize: 32, fontWeight: '900' }}>{available.length}</ThemedText><ThemedText style={{ color: '#D8F5F7', marginLeft: 10 }}>available now</ThemedText></View>
       </View>
+      <Press
+        onPress={() => navigation.navigate('TechnicianReviews')}
+        style={{ marginTop: 14 }}
+      >
+        <Card style={{ padding: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: colors.orangeSoft, alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name="star-outline" size={24} color={colors.orange} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <ThemedText style={{ color: colors.text, fontSize: 16, fontWeight: '800' }}>
+                Your professional performance
+              </ThemedText>
+              <ThemedText style={{ color: colors.muted, marginTop: 3 }}>
+                {technician?.reviews_count || 0} reviews · {Number(technician?.jobs_completed || 0)} jobs completed
+              </ThemedText>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 15, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 14 }}>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <ThemedText style={{ color: colors.teal, fontSize: 20, fontWeight: '900' }}>{Number(technician?.jobs_completed || 0)}</ThemedText>
+              <ThemedText style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Completed</ThemedText>
+            </View>
+            <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
+              {technician?.rating != null && (Number(technician?.reviews_count || 0) > 0 || technician?.rating_is_admin_set) ? (
+                <>
+                  <ThemedText style={{ color: colors.orange, fontSize: 20, fontWeight: '900' }}>{Number(technician.rating).toFixed(1)} ★</ThemedText>
+                  <ThemedText style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Rating</ThemedText>
+                </>
+              ) : (
+                <>
+                  <ThemedText style={{ color: colors.muted, fontSize: 16, fontWeight: '800' }}>Not rated</ThemedText>
+                  <ThemedText style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Rating</ThemedText>
+                </>
+              )}
+            </View>
+            <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
+              <ThemedText style={{ color: colors.teal, fontSize: 20, fontWeight: '900' }}>{Number(technician?.reviews_count || 0)}</ThemedText>
+              <ThemedText style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Reviews</ThemedText>
+            </View>
+          </View>
+        </Card>
+      </Press>
       {error ? <Card style={{ marginTop: 16 }}><ThemedText style={{ color: colors.danger }}>{error}</ThemedText><Press onPress={load} style={{ marginTop: 10 }}><ThemedText style={{ color: colors.teal, fontWeight: '800' }}>Try again</ThemedText></Press></Card> : null}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}><ThemedText style={[styles.h2, { color: colors.text }]}>Available bookings</ThemedText><ThemedText style={{ color: colors.muted }}>{available.length}</ThemedText></View>
       {!loading && available.length === 0 ? <Card style={{ marginTop: 12, alignItems: 'center', padding: 24 }}><Ionicons name="checkmark-circle-outline" size={42} color={colors.teal} /><ThemedText style={{ color: colors.text, fontWeight: '800', marginTop: 10 }}>You're all caught up</ThemedText><ThemedText style={{ color: colors.muted, textAlign: 'center', marginTop: 5 }}>New customer requests will appear here.</ThemedText></Card> : null}
