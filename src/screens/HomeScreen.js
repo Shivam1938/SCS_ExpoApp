@@ -10,6 +10,22 @@ import { api } from '../services/api';
 const addressText = (item) => [item.line, item.city].filter(Boolean).join(', ');
 
 export default function HomeScreen({ navigation }) {
+    const [homeBannerUrl, setHomeBannerUrl] = useState(null);
+      useEffect(() => {
+    let active = true;
+
+    api.getHomeBanner()
+      .then((url) => {
+        if (active) setHomeBannerUrl(url);
+      })
+      .catch(() => {
+        if (active) setHomeBannerUrl(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
   const { user, selectedAddress, setSelectedAddress, services, servicesLoading, refreshServices, refreshProfile } = useApp();
   const [q, setQ] = useState('');
   const [locationOpen, setLocationOpen] = useState(false);
@@ -96,7 +112,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
-        {!term && (
+        {/* {!term && (
           <FadeIn delay={100}>
             <View style={{ backgroundColor: colors.orange, borderRadius: radius.lg, padding: 18, marginTop: 18, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ flex: 1, paddingRight: 8 }}>
@@ -111,7 +127,87 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
           </FadeIn>
-        )}
+        )} */}
+        {!term && (
+  <FadeIn delay={100}>
+    <Press
+      onPress={() => navigation.navigate('AllServices')}
+      style={{
+        marginTop: 18,
+        height: 160,
+        borderRadius: radius.lg,
+        overflow: 'hidden',
+        backgroundColor: colors.orange,
+      }}
+    >
+      {homeBannerUrl ? (
+        <Image
+          source={{ uri: homeBannerUrl }}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="cover"
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            padding: 18,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <View style={{ flex: 1, paddingRight: 8 }}>
+            <Text
+              style={{
+                color: '#fff',
+                fontSize: 20,
+                fontWeight: '800',
+              }}
+            >
+              Expert help at your doorstep
+            </Text>
+
+            <Text
+              style={{
+                color: '#FFE3D0',
+                marginTop: 6,
+                marginBottom: 12,
+              }}
+            >
+              Fast, verified technicians
+            </Text>
+
+            <View
+              style={{
+                backgroundColor: '#fff',
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 999,
+                alignSelf: 'flex-start',
+              }}
+            >
+              <Text style={{ color: colors.orange, fontWeight: '700' }}>
+                View services
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              width: 92,
+              height: 112,
+              borderRadius: 16,
+              backgroundColor: '#1F2A33',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Ionicons name="desktop-outline" size={44} color="#FFB380" />
+          </View>
+        </View>
+      )}
+    </Press>
+  </FadeIn>
+)}
 
         <Text style={[styles.h2, { marginTop: 24, marginBottom: 12 }]}>{term ? 'Results' : 'Book a service'}</Text>
         {servicesLoading && <ActivityIndicator color={colors.teal} style={{ marginVertical: 20 }} />}

@@ -362,6 +362,17 @@ export const api = {
       rating: s.rating || 0,
     }));
   },
+    async getHomeBanner() {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("home_banner_url")
+      .eq("id", "global")
+      .maybeSingle();
+
+    if (error) throw error;
+
+    return data?.home_banner_url || null;
+  },
   async getPaymentSettings() {
     const { data, error } = await supabase
       .from("payment_settings")
