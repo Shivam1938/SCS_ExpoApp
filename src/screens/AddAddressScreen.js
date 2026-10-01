@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TextInput, View } from 'react-native';
-import { Screen, Header, Button, Press } from '../components/ui';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { Screen, Header, Button, Press, ThemedText, ThemedTextInput } from '../components/ui';
 import { colors, radius } from '../theme';
 import { api } from '../services/api';
 import { useApp } from '../context/AppContext';
@@ -53,27 +53,27 @@ export default function AddAddressScreen({ navigation, route }) {
   return (
     <Screen>
       <Header title={editing ? 'Edit address' : 'Add new address'} onBack={() => navigation.goBack()} />
-      <View style={{ padding: 20 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         {!editing && <Press disabled={locating} onPress={useCurrentLocation} style={{ backgroundColor: colors.tealSoft, borderRadius: radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
           {locating ? <ActivityIndicator color={colors.teal} /> : null}
-          <Text style={{ color: colors.teal, fontWeight: '700', marginLeft: locating ? 10 : 0 }}>{locating ? 'Getting current address...' : 'Use current location'}</Text>
+          <ThemedText style={{ color: colors.teal, fontWeight: '700', marginLeft: locating ? 10 : 0 }}>{locating ? 'Getting current address...' : 'Use current location'}</ThemedText>
         </Press>}
-        <Text style={{ color: colors.text, fontWeight: '700', marginBottom: 8 }}>Label</Text>
+        <ThemedText style={{ color: colors.text, fontWeight: '700', marginBottom: 8 }}>Label</ThemedText>
         <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-          {labels.map((item) => <Press key={item} onPress={() => setLabel(item)} style={{ marginRight: 8, paddingVertical: 9, paddingHorizontal: 15, borderRadius: 20, backgroundColor: label === item ? colors.teal : '#fff', borderWidth: 1, borderColor: label === item ? colors.teal : colors.border }}><Text style={{ color: label === item ? '#fff' : colors.text, fontWeight: '600' }}>{item}</Text></Press>)}
+          {labels.map((item) => <Press key={item} onPress={() => setLabel(item)} style={{ marginRight: 8, paddingVertical: 9, paddingHorizontal: 15, borderRadius: 20, backgroundColor: label === item ? colors.teal : '#fff', borderWidth: 1, borderColor: label === item ? colors.teal : colors.border }}><ThemedText style={{ color: label === item ? '#fff' : colors.text, fontWeight: '600' }}>{item}</ThemedText></Press>)}
         </View>
-        {label === 'Other' && <TextInput value={customLabel} onChangeText={setCustomLabel} placeholder="Custom label" style={inputStyle} />}
-        <Text style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>Address</Text>
-        <TextInput value={line} onChangeText={setLine} placeholder="House number, street, area" multiline style={[inputStyle, { minHeight: 90, textAlignVertical: 'top' }]} />
-        <Text style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>City</Text>
-        <TextInput value={city} onChangeText={setCity} placeholder="City" style={inputStyle} />
-        <Text style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>Pincode (optional)</Text>
-        <TextInput value={pincode} onChangeText={setPincode} placeholder="Pincode" keyboardType="number-pad" style={inputStyle} />
-        {error ? <Text accessibilityRole="alert" style={{ color: '#C43D32', marginTop: 12 }}>{error}</Text> : null}
+        {label === 'Other' && <ThemedTextInput value={customLabel} onChangeText={setCustomLabel} placeholder="Custom label" style={inputStyle} />}
+        <ThemedText style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>Address</ThemedText>
+        <ThemedTextInput value={line} onChangeText={setLine} placeholder="House number, street, area" multiline style={[inputStyle, { minHeight: 90, textAlignVertical: 'top' }]} />
+        <ThemedText style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>City</ThemedText>
+        <ThemedTextInput value={city} onChangeText={setCity} placeholder="City" style={inputStyle} />
+        <ThemedText style={{ color: colors.text, fontWeight: '700', marginTop: 16, marginBottom: 8 }}>Pincode (optional)</ThemedText>
+        <ThemedTextInput value={pincode} onChangeText={setPincode} placeholder="Pincode" keyboardType="number-pad" style={inputStyle} />
+        {error ? <ThemedText accessibilityRole="alert" style={{ color: '#C43D32', marginTop: 12 }}>{error}</ThemedText> : null}
         <Button title={saving ? 'Saving...' : editing ? 'Save changes' : 'Save address'} disabled={saving || locating} onPress={save} style={{ marginTop: 22 }} />
-      </View>
+      </ScrollView></KeyboardAvoidingView>
     </Screen>
   );
 }
 
-const inputStyle = { backgroundColor: '#fff', borderRadius: radius.md, padding: 14, fontSize: 16, color: colors.text, borderWidth: 1, borderColor: colors.border };
+const inputStyle = { backgroundColor: colors.surface, borderRadius: radius.md, padding: 14, fontSize: 16, color: colors.text, borderWidth: 1, borderColor: colors.border };

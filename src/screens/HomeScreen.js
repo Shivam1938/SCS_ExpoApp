@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, View, TextInput, FlatList } from 'react-native';
+import { ActivityIndicator, Alert, Image, Modal, ScrollView, View, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Logo, Card, IconBox, Press, FadeIn, styles } from '../components/ui';
+import { Screen, Logo, Card, IconBox, Press, FadeIn, styles, ThemedText, ThemedTextInput } from '../components/ui';
 import { colors, radius } from '../theme';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
@@ -92,22 +92,22 @@ export default function HomeScreen({ navigation }) {
           <Press onPress={() => setLocationOpen(true)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
             <Logo size={22} />
             <Ionicons name="location-outline" size={16} color={colors.orange} style={{ marginLeft: 10 }} />
-            <Text numberOfLines={1} style={{ color: colors.muted, marginLeft: 3, flexShrink: 1 }}>{locationLabel}</Text>
+            <ThemedText numberOfLines={1} style={{ color: colors.muted, marginLeft: 3, flexShrink: 1 }}>{locationLabel}</ThemedText>
           </Press>
           <Press onPress={() => navigation.navigate('Profile')} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#2A3640', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            {user.avatarUrl ? <Image source={{ uri: user.avatarUrl }} style={{ width: 44, height: 44 }} /> : <Text style={{ color: '#fff', fontWeight: '700' }}>{user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</Text>}
+            {user.avatarUrl ? <Image source={{ uri: user.avatarUrl }} style={{ width: 44, height: 44 }} /> : <ThemedText style={{ color: '#fff', fontWeight: '700' }}>{user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</ThemedText>}
           </Press>
         </View>
 
         {/* <FadeIn>
-          <Text style={[styles.h1, { marginTop: 20 }]}>Hi {user.name.split(' ')[0]}</Text>
+          <ThemedText style={[styles.h1, { color: colors.text, marginTop: 20 }]}>Hi {user.name.split(' ')[0]}</ThemedText>
         </FadeIn> */}
 
         <View style={{ backgroundColor: colors.bg, paddingBottom: 8, zIndex: 1 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: radius.md, paddingHorizontal: 14, height: 52, marginTop: 16, borderWidth: 1, borderColor: '#E6ECEE' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderRadius: radius.md, paddingHorizontal: 14, height: 52, marginTop: 16, borderWidth: 1, borderColor: colors.border }}>
             <Ionicons name="search" size={20} color={colors.teal} />
-            <TextInput underlineColorAndroid="transparent" value={q} onChangeText={setQ} placeholder="Search computer, CCTV, laptop..."
-              placeholderTextColor="#9AA3A9" style={{ flex: 1, marginLeft: 10, fontSize: 15, paddingVertical: 0 }} />
+            <ThemedTextInput underlineColorAndroid="transparent" value={q} onChangeText={setQ} placeholder="Search computer, CCTV, laptop..."
+              placeholderTextColor={colors.muted} style={{ flex: 1, marginLeft: 10, fontSize: 15, paddingVertical: 0 }} />
             {q ? <Ionicons name="close-circle" size={18} color="#9AA3A9" onPress={() => setQ('')} /> : null}
           </View>
         </View>
@@ -116,10 +116,10 @@ export default function HomeScreen({ navigation }) {
           <FadeIn delay={100}>
             <View style={{ backgroundColor: colors.orange, borderRadius: radius.lg, padding: 18, marginTop: 18, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ flex: 1, paddingRight: 8 }}>
-                <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Expert help at your doorstep</Text>
-                <Text style={{ color: '#FFE3D0', marginTop: 6, marginBottom: 12 }}>Fast, verified technicians</Text>
-                <Press onPress={() => navigation.navigate('AllServices')} style={{ backgroundColor: '#fff', paddingVertical: 10, paddingHorizontal: 16, borderRadius: 999, alignSelf: 'flex-start' }}>
-                  <Text style={{ color: colors.orange, fontWeight: '700' }}>View services</Text>
+                <ThemedText style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Expert help at your doorstep</ThemedText>
+                <ThemedText style={{ color: '#FFE3D0', marginTop: 6, marginBottom: 12 }}>Fast, verified technicians</ThemedText>
+                <Press onPress={() => navigation.navigate('AllServices')} style={{ backgroundColor: colors.surface, paddingVertical: 10, paddingHorizontal: 16, borderRadius: 999, alignSelf: 'flex-start' }}>
+                  <ThemedText style={{ color: colors.orange, fontWeight: '700' }}>View services</ThemedText>
                 </Press>
               </View>
               <View style={{ width: 92, height: 112, borderRadius: 16, backgroundColor: '#1F2A33', alignItems: 'center', justifyContent: 'center' }}>
@@ -156,7 +156,7 @@ export default function HomeScreen({ navigation }) {
           }}
         >
           <View style={{ flex: 1, paddingRight: 8 }}>
-            <Text
+            <ThemedText
               style={{
                 color: '#fff',
                 fontSize: 20,
@@ -164,9 +164,9 @@ export default function HomeScreen({ navigation }) {
               }}
             >
               Expert help at your doorstep
-            </Text>
+            </ThemedText>
 
-            <Text
+            <ThemedText
               style={{
                 color: '#FFE3D0',
                 marginTop: 6,
@@ -174,20 +174,20 @@ export default function HomeScreen({ navigation }) {
               }}
             >
               Fast, verified technicians
-            </Text>
+            </ThemedText>
 
             <View
               style={{
-                backgroundColor: '#fff',
+                backgroundColor: colors.surface,
                 paddingVertical: 10,
                 paddingHorizontal: 16,
                 borderRadius: 999,
                 alignSelf: 'flex-start',
               }}
             >
-              <Text style={{ color: colors.orange, fontWeight: '700' }}>
+              <ThemedText style={{ color: colors.orange, fontWeight: '700' }}>
                 View services
-              </Text>
+              </ThemedText>
             </View>
           </View>
 
@@ -209,9 +209,9 @@ export default function HomeScreen({ navigation }) {
   </FadeIn>
 )}
 
-        <Text style={[styles.h2, { marginTop: 24, marginBottom: 12 }]}>{term ? 'Results' : 'Book a service'}</Text>
+        <ThemedText style={[styles.h2, { color: colors.text, marginTop: 24, marginBottom: 12 }]}>{term ? 'Results' : 'Book a service'}</ThemedText>
         {servicesLoading && <ActivityIndicator color={colors.teal} style={{ marginVertical: 20 }} />}
-        {!servicesLoading && list.length === 0 && <Text style={{ color: colors.muted, textAlign: 'center', marginVertical: 20 }}>{term ? `No services found for "${q}"` : 'No services are available right now.'}</Text>}
+        {!servicesLoading && list.length === 0 && <ThemedText style={{ color: colors.muted, textAlign: 'center', marginVertical: 20 }}>{term ? `No services found for "${q}"` : 'No services are available right now.'}</ThemedText>}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {list.map((s, i) => (
             <FadeIn key={s.id} delay={150 + i * 60} style={{ width: '48%', marginBottom: 12 }}>
@@ -232,8 +232,8 @@ export default function HomeScreen({ navigation }) {
   )}
 </View>
                   <View style={{ padding: 12 }}>
-                    <Text numberOfLines={1} style={{ fontWeight: '700', color: colors.text, fontSize: 15 }}>{s.name}</Text>
-                    <Text style={{ color: colors.muted, fontSize: 12, marginTop: 3 }}>From ₹{s.price}</Text>
+                    <ThemedText numberOfLines={1} style={{ fontWeight: '700', color: colors.text, fontSize: 15 }}>{s.name}</ThemedText>
+                    <ThemedText style={{ color: colors.muted, fontSize: 12, marginTop: 3 }}>From ₹{s.price}</ThemedText>
                   </View>
                 </Card>
               </Press>
@@ -243,20 +243,20 @@ export default function HomeScreen({ navigation }) {
 
         {!term && (
           <>
-            <Press onPress={() => navigation.navigate('AllServices')} style={{ backgroundColor: '#fff', borderRadius: radius.md, borderWidth: 1, borderColor: '#E6ECEE', paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: colors.teal, fontWeight: '700', fontSize: 15 }}>View all services</Text>
+            <Press onPress={() => navigation.navigate('AllServices')} style={{ backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+              <ThemedText style={{ color: colors.teal, fontWeight: '700', fontSize: 15 }}>View all services</ThemedText>
               <Ionicons name="chevron-forward" size={16} color={colors.teal} style={{ marginLeft: 4 }} />
             </Press>
-            <Text style={[styles.h2, { marginTop: 26, marginBottom: 12 }]}>Popular near you</Text>
+            <ThemedText style={[styles.h2, { color: colors.text, marginTop: 26, marginBottom: 12 }]}>Popular near you</ThemedText>
             <FlatList horizontal data={popular} keyExtractor={(i) => i.id} showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <Press onPress={() => open(item.serviceId)} style={{ marginRight: 12 }}>
                   <Card style={{ width: 170 }}>
                     <IconBox name={item.icon} />
-                    <Text style={{ fontWeight: '700', fontSize: 16, marginTop: 14 }}>{item.name}</Text>
-                    <Text style={{ color: colors.muted, marginTop: 4 }}>From ₹{item.price.toLocaleString('en-IN')}</Text>
+                    <ThemedText style={{ fontWeight: '700', fontSize: 16, marginTop: 14 }}>{item.name}</ThemedText>
+                    <ThemedText style={{ color: colors.muted, marginTop: 4 }}>From ₹{item.price.toLocaleString('en-IN')}</ThemedText>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                      <Ionicons name="star" size={15} color={colors.star} /><Text style={{ fontWeight: '700', marginLeft: 4 }}>{item.rating}</Text>
+                      <Ionicons name="star" size={15} color={colors.star} /><ThemedText style={{ fontWeight: '700', marginLeft: 4 }}>{item.rating}</ThemedText>
                     </View>
                   </Card>
                 </Press>
@@ -268,40 +268,40 @@ export default function HomeScreen({ navigation }) {
         <Press onPress={() => setLocationOpen(false)} style={{ flex: 1, backgroundColor: '#0006', justifyContent: 'flex-end' }}>
           <Press onPress={() => {}} style={{ backgroundColor: colors.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '78%' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <Text style={styles.h2}>Choose a location</Text>
+              <ThemedText style={[styles.h2, { color: colors.text }]}>Choose a location</ThemedText>
               <Press onPress={() => setLocationOpen(false)}><Ionicons name="close" size={24} color={colors.text} /></Press>
             </View>
             <ScrollView keyboardShouldPersistTaps="handled">
               <Press disabled={locationLoading} onPress={chooseCurrentLocation} style={{ backgroundColor: colors.tealSoft, borderRadius: radius.md, padding: 15, flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
                 {locationLoading ? <ActivityIndicator color={colors.teal} /> : <Ionicons name="navigate" size={20} color={colors.teal} />}
-                <Text style={{ color: colors.teal, fontWeight: '700', marginLeft: 10 }}>Use Current Location</Text>
+                <ThemedText style={{ color: colors.teal, fontWeight: '700', marginLeft: 10 }}>Use Current Location</ThemedText>
               </Press>
-              {gpsAddress ? <Press onPress={() => chooseAddress(gpsAddress)} style={{ backgroundColor: '#fff', borderRadius: radius.md, padding: 14, marginBottom: 14, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: selectedAddress?.id === gpsAddress.id ? colors.teal : colors.border }}>
+              {gpsAddress ? <Press onPress={() => chooseAddress(gpsAddress)} style={{ backgroundColor: colors.surface, borderRadius: radius.md, padding: 14, marginBottom: 14, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: selectedAddress?.id === gpsAddress.id ? colors.teal : colors.border }}>
                 <Ionicons name={selectedAddress?.id === gpsAddress.id ? 'radio-button-on' : 'location'} size={21} color={colors.teal} />
                 <View style={{ flex: 1, marginLeft: 10 }}>
-                  <Text style={{ color: colors.text, fontWeight: '700' }}>Current location</Text>
-                  <Text style={{ color: colors.muted, marginTop: 3 }}>{addressText(gpsAddress)}</Text>
+                  <ThemedText style={{ color: colors.text, fontWeight: '700' }}>Current location</ThemedText>
+                  <ThemedText style={{ color: colors.muted, marginTop: 3 }}>{addressText(gpsAddress)}</ThemedText>
                 </View>
               </Press> : null}
-              <Text style={{ color: colors.muted, fontWeight: '700', marginBottom: 10 }}>Saved addresses</Text>
+              <ThemedText style={{ color: colors.muted, fontWeight: '700', marginBottom: 10 }}>Saved addresses</ThemedText>
               {addressesLoading ? <ActivityIndicator color={colors.teal} style={{ marginVertical: 16 }} /> : addressError ?
-                <Text style={{ color: colors.muted, marginBottom: 12 }}>{addressError}</Text> : addresses.length === 0 ?
-                  <Text style={{ color: colors.muted, marginBottom: 12 }}>No saved addresses yet.</Text> : addresses.map((item) => (
-                    <Press key={item.id} onPress={() => chooseAddress(item)} style={{ backgroundColor: '#fff', borderRadius: radius.md, padding: 14, marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
+                <ThemedText style={{ color: colors.muted, marginBottom: 12 }}>{addressError}</ThemedText> : addresses.length === 0 ?
+                  <ThemedText style={{ color: colors.muted, marginBottom: 12 }}>No saved addresses yet.</ThemedText> : addresses.map((item) => (
+                    <Press key={item.id} onPress={() => chooseAddress(item)} style={{ backgroundColor: colors.surface, borderRadius: radius.md, padding: 14, marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
                       <Ionicons name={selectedAddress?.id === item.id ? 'radio-button-on' : 'location-outline'} size={21} color={colors.teal} />
                       <View style={{ flex: 1, marginLeft: 10 }}>
-                        <Text style={{ color: colors.text, fontWeight: '700' }}>{item.label || 'Saved address'}{item.is_default ? ' · Default' : ''}</Text>
-                        <Text style={{ color: colors.muted, marginTop: 3 }}>{addressText(item)}</Text>
+                        <ThemedText style={{ color: colors.text, fontWeight: '700' }}>{item.label || 'Saved address'}{item.is_default ? ' · Default' : ''}</ThemedText>
+                        <ThemedText style={{ color: colors.muted, marginTop: 3 }}>{addressText(item)}</ThemedText>
                       </View>
                     </Press>
                   ))}
               <Press onPress={() => { setLocationOpen(false); navigation.navigate('Addresses'); }} style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="settings-outline" size={20} color={colors.teal} />
-                <Text style={{ color: colors.teal, fontWeight: '700', marginLeft: 10 }}>Manage saved addresses</Text>
+                <ThemedText style={{ color: colors.teal, fontWeight: '700', marginLeft: 10 }}>Manage saved addresses</ThemedText>
               </Press>
               <Press onPress={() => { setLocationOpen(false); navigation.navigate('AddAddress', { makeDefault: addresses.length === 0 }); }} style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="add-circle-outline" size={22} color={colors.orange} />
-                <Text style={{ color: colors.orange, fontWeight: '700', marginLeft: 10 }}>Add New Address</Text>
+                <ThemedText style={{ color: colors.orange, fontWeight: '700', marginLeft: 10 }}>Add New Address</ThemedText>
               </Press>
             </ScrollView>
           </Press>

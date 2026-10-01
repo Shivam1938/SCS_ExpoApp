@@ -1,19 +1,26 @@
 import React, { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Alert, Image, ScrollView, Text, View } from 'react-native';
+import { Alert, Image, ScrollView, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Card, IconBox, Press, FadeIn, styles } from '../components/ui';
+import { Screen, Card, IconBox, Press, FadeIn, styles, ThemedText } from '../components/ui';
 import { colors, radius } from '../theme';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileScreen({ navigation }) {
   const { user, setUser, refreshProfile } = useApp();
+  const { mode, resolved, setMode } = useTheme();
   const [loggingOut, setLoggingOut] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [technicianStats, setTechnicianStats] = useState(null);
   useFocusEffect(useCallback(() => {
-    refreshProfile().catch((error) => console.warn('profile refresh failed', error?.message));
+    refreshProfile().then((profile) => {
+      if (profile?.role === 'technician') return api.getTechnicianProfile().then(setTechnicianStats);
+      setTechnicianStats(null);
+    }).catch((error) => console.warn('profile refresh failed', error?.message));
+    return undefined;
   }, [refreshProfile]));
   const changeProfilePhoto = async () => {
     if (uploadingPhoto) return;
@@ -50,10 +57,13 @@ export default function ProfileScreen({ navigation }) {
       setLoggingOut(false);
     }
   };
-  const rows = [
+  const customerRows = [
     { i: 'location-outline', l: 'Saved Addresses', tint: colors.tealSoft, go: () => navigation.navigate('Addresses') },
     { i: 'bookmark-outline', l: 'Saved Services', tint: colors.orangeSoft, go: () => navigation.navigate('Bookmarks') },
     { i: 'calendar-outline', l: 'My Bookings', tint: '#DDF3EE', go: () => navigation.navigate('Bookings') },
+  ];
+  const commonRows = [
+    { i: 'mail-outline', l: 'Change Email', tint: colors.tealSoft, go: () => navigation.navigate('ChangeEmail') },
     { i: 'help-circle-outline', l: 'Help & Support', tint: colors.purpleSoft, go: () => navigation.navigate('HelpSupport') },
     { i: 'information-circle-outline', l: 'About Us', tint: colors.tealSoft, go: () => navigation.navigate('AboutUs') },
     { i: 'call-outline', l: 'Contact Us', tint: colors.tealSoft, go: () => navigation.navigate('ContactUs') },
@@ -62,54 +72,85 @@ export default function ProfileScreen({ navigation }) {
     { i: 'return-down-back-outline', l: 'Cancellation / Refund Policy', tint: colors.orangeSoft, go: () => navigation.navigate('CancellationRefundPolicy') },
     { i: 'construct-outline', l: 'Service Policy', tint: '#DDF3EE', go: () => navigation.navigate('ServicePolicy') },
   ];
+  const rows = user.role === 'technician' ? commonRows : [...customerRows, ...commonRows];
   return (
     <Screen edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={styles.h1}>Profile</Text>
+          <ThemedText style={[styles.h1, { color: colors.text }]}>Profile</ThemedText>
         </View>
         <FadeIn>
           <Card style={{ marginTop: 18, padding: 16 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Press onPress={changeProfilePhoto} disabled={uploadingPhoto} style={{ alignItems: 'center', opacity: uploadingPhoto ? 0.6 : 1, width: 82 }}>
                 <View style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: colors.tealSoft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {user.avatarUrl ? <Image source={{ uri: user.avatarUrl }} style={{ width: 68, height: 68 }} /> : <Text style={{ fontSize: 24, fontWeight: '700' }}>{(user.name || 'Guest').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</Text>}
+                  {user.avatarUrl ? <Image source={{ uri: user.avatarUrl }} style={{ width: 68, height: 68 }} /> : <ThemedText style={{ fontSize: 24, fontWeight: '700' }}>{(user.name || 'Guest').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}</ThemedText>}
                 </View>
-                <Text numberOfLines={1} style={{ color: colors.teal, fontSize: 11, fontWeight: '600', marginTop: 5 }}>{uploadingPhoto ? 'Uploading…' : 'Change photo'}</Text>
+                <ThemedText numberOfLines={1} style={{ color: colors.teal, fontSize: 11, fontWeight: '600', marginTop: 5 }}>{uploadingPhoto ? 'Uploading…' : 'Change photo'}</ThemedText>
               </Press>
               <View style={{ flex: 1, minWidth: 0, marginLeft: 12, alignItems: 'flex-start' }}>
-                <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: '800', color: colors.text, flexShrink: 1 }}>{user.name || 'Guest'}</Text>
-                <Text numberOfLines={1} style={{ color: colors.muted, marginTop: 4, fontSize: 15 }}>{user.phone || 'Phone number not added'}</Text>
+                <ThemedText numberOfLines={1} style={{ fontSize: 20, fontWeight: '800', color: colors.text, flexShrink: 1 }}>{user.name || 'Guest'}</ThemedText>
+                <ThemedText numberOfLines={1} style={{ color: colors.muted, marginTop: 4, fontSize: 15 }}>{user.phone || 'Phone number not added'}</ThemedText>
                 <Press accessibilityRole="button" accessibilityLabel="Edit profile" onPress={() => navigation.navigate('AddPhone')} style={{ marginTop: 7, paddingVertical: 3, paddingHorizontal: 2 }}>
-                  <Text style={{ color: '#1769AA', fontSize: 14, fontWeight: '700' }}>Edit</Text>
+                  <ThemedText style={{ color: '#1769AA', fontSize: 14, fontWeight: '700' }}>Edit</ThemedText>
                 </Press>
               </View>
             </View>
           </Card>
           <View style={{ backgroundColor: colors.orange, borderRadius: radius.lg, padding: 20, marginTop: 18, flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Sunshine Computer Solution Plus ✨</Text>
-              <Text style={{ color: '#FFE3D0', marginTop: 6, fontSize: 15 }}>Priority support and 10% off every visit</Text>
+              <ThemedText style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Sunshine Computer Solution Plus ✨</ThemedText>
+              <ThemedText style={{ color: '#FFE3D0', marginTop: 6, fontSize: 15 }}>Priority support and 10% off every visit</ThemedText>
             </View>
-            <View style={{ backgroundColor: '#fff', paddingHorizontal: 18, paddingVertical: 12, borderRadius: 999 }}>
-              <Text style={{ color: '#C24A00', fontWeight: '700' }}>Coming soon</Text>
+            <View style={{ backgroundColor: colors.surface, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 999 }}>
+              <ThemedText style={{ color: '#C24A00', fontWeight: '700' }}>Coming soon</ThemedText>
             </View>
           </View>
         </FadeIn>
+        {user.role === 'technician' && technicianStats ? (
+          <FadeIn delay={90}>
+            <Card style={{ marginTop: 14, padding: 16 }}>
+              <ThemedText style={{ color: colors.text, fontSize: 18, fontWeight: '800' }}>Professional stats</ThemedText>
+              <View style={{ flexDirection: 'row', marginTop: 16 }}>
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                  <ThemedText style={{ color: colors.teal, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.jobs_completed || 0)}</ThemedText>
+                  <ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Jobs completed</ThemedText>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
+                  {technicianStats.rating != null && (technicianStats.reviews_count > 0 || technicianStats.rating_is_admin_set) ? <><ThemedText style={{ color: colors.orange, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.rating).toFixed(1)} ★</ThemedText><ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Rating</ThemedText></> : <><ThemedText style={{ color: colors.muted, fontSize: 18, fontWeight: '800' }}>Not rated</ThemedText><ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Rating</ThemedText></>}
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', borderLeftWidth: 1, borderColor: colors.border }}>
+                  <ThemedText style={{ color: colors.teal, fontSize: 22, fontWeight: '900' }}>{Number(technicianStats.reviews_count || 0)}</ThemedText>
+                  <ThemedText style={{ color: colors.muted, marginTop: 4, textAlign: 'center', fontSize: 12 }}>Reviews</ThemedText>
+                </View>
+              </View>
+              {technicianStats.years_experience > 0 ? <ThemedText style={{ color: colors.muted, marginTop: 14, textAlign: 'center' }}>{technicianStats.years_experience} years experience</ThemedText> : null}
+            </Card>
+          </FadeIn>
+        ) : null}
         {rows.map((r, i) => (
           <FadeIn key={r.l} delay={100 + i * 70}>
             <Press onPress={r.go} style={{ marginTop: 12 }}>
               <Card style={{ flexDirection: 'row', alignItems: 'center', padding: 14 }}>
                 <IconBox name={r.i} tint={r.tint} size={48} />
-                <Text style={{ flex: 1, marginLeft: 16, fontSize: 17, fontWeight: '500' }}>{r.l}</Text>
+                <ThemedText style={{ flex: 1, marginLeft: 16, fontSize: 17, fontWeight: '500' }}>{r.l}</ThemedText>
                 <Ionicons name="chevron-forward" size={20} color={colors.text} />
               </Card>
             </Press>
           </FadeIn>
         ))}
-        <Press onPress={logout} disabled={loggingOut} style={{ marginTop: 26, backgroundColor: '#fff', borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, padding: 16, flexDirection: 'row', alignItems: 'center', opacity: loggingOut ? 0.6 : 1 }}>
+        <Card style={{ marginTop: 18, padding: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <IconBox name={resolved === 'dark' ? 'moon' : 'sunny-outline'} tint={colors.purpleSoft} size={46} />
+            <View style={{ flex: 1, marginLeft: 14 }}><ThemedText style={{ color: colors.text, fontSize: 16, fontWeight: '800' }}>Appearance</ThemedText><ThemedText style={{ color: colors.muted, marginTop: 3 }}>{resolved === 'dark' ? 'Dark mode' : 'Light mode'}</ThemedText></View>
+            <View style={{ flexDirection: 'row', backgroundColor: colors.input, borderRadius: 12, padding: 3 }}>
+              {[['light', 'sunny-outline'], ['dark', 'moon-outline']].map(([key, icon]) => <Press key={key} onPress={() => setMode(key)} style={{ width: 42, height: 36, borderRadius: 9, alignItems: 'center', justifyContent: 'center', backgroundColor: mode === key ? colors.surface : 'transparent' }}><Ionicons name={icon} size={18} color={mode === key ? colors.orange : colors.muted} /></Press>)}
+            </View>
+          </View>
+        </Card>
+        <Press onPress={logout} disabled={loggingOut} style={{ marginTop: 26, backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, padding: 16, flexDirection: 'row', alignItems: 'center', opacity: loggingOut ? 0.6 : 1 }}>
           <Ionicons name="log-out-outline" size={22} color={colors.muted} />
-          <Text style={{ flex: 1, marginLeft: 14, fontSize: 17, color: colors.muted }}>{loggingOut ? 'Signing out…' : 'Logout'}</Text>
+          <ThemedText style={{ flex: 1, marginLeft: 14, fontSize: 17, color: colors.muted }}>{loggingOut ? 'Signing out…' : 'Logout'}</ThemedText>
           <Ionicons name="chevron-forward" size={20} color={colors.muted} />
         </Press>
       </ScrollView>

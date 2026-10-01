@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Text, View, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { Alert, View, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Header, Card, IconBox, Pill, Press, FadeIn } from '../components/ui';
+import { Screen, Header, Card, IconBox, Pill, Press, FadeIn, ThemedText } from '../components/ui';
 import { colors, radius } from '../theme';
 import { api } from '../services/api';
 import { useApp } from '../context/AppContext';
@@ -31,7 +31,7 @@ export default function TrackBookingScreen({ navigation, route }) {
       <Screen>
         <Header title="Track booking" onBack={() => navigation.goBack()} />
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {err ? <Text style={{ color: colors.muted }}>{err}</Text> : <ActivityIndicator color={colors.orange} />}
+          {err ? <ThemedText style={{ color: colors.muted }}>{err}</ThemedText> : <ActivityIndicator color={colors.orange} />}
         </View>
       </Screen>
     );
@@ -57,50 +57,56 @@ export default function TrackBookingScreen({ navigation, route }) {
         <Card style={{ flexDirection: 'row', alignItems: 'center' }}>
           <IconBox name="construct-outline" size={60} tint={colors.teal} color="#fff" />
           <View style={{ flex: 1, marginLeft: 14 }}>
-            <Text style={{ fontSize: 18, fontWeight: '700' }}>{b.service}</Text>
-            <Text style={{ color: colors.muted, marginTop: 4 }}>{b.id}</Text>
+            <ThemedText style={{ fontSize: 18, fontWeight: '700' }}>{b.service}</ThemedText>
+            <ThemedText style={{ color: colors.muted, marginTop: 4 }}>{b.id}</ThemedText>
           </View>
           <Pill text={b.status} />
         </Card>
 
         <View style={{ backgroundColor: colors.tealSoft, borderRadius: radius.lg, padding: 18, marginTop: 16 }}>
-          <Text style={{ fontSize: 17, fontWeight: '700' }}>{p.msg}</Text>
-          <Text style={{ color: colors.muted, marginTop: 6 }}>{b.when}</Text>
-          <Text style={{ color: colors.muted, marginTop: 2 }}>{b.address}</Text>
-          {b.bookingPhone ? <Text style={{ color: colors.muted, marginTop: 5 }}>Booking phone: {b.bookingPhone}</Text> : null}
+          <ThemedText style={{ fontSize: 17, fontWeight: '700' }}>{p.msg}</ThemedText>
+          <ThemedText style={{ color: colors.muted, marginTop: 6 }}>{b.when}</ThemedText>
+          <ThemedText style={{ color: colors.muted, marginTop: 2 }}>{b.address}</ThemedText>
+          {b.bookingPhone ? <ThemedText style={{ color: colors.muted, marginTop: 5 }}>Booking phone: {b.bookingPhone}</ThemedText> : null}
         </View>
 
         <Card style={{ marginTop: 14 }}>
-          <Text style={{ fontSize: 18, fontWeight: '800' }}>{b.rawStatus === 'completed' && b.paymentStatus === 'paid' ? 'Payment receipt' : 'Booking details'}</Text>
+          <ThemedText style={{ fontSize: 18, fontWeight: '800' }}>Booking details</ThemedText>
           <View style={{ marginTop: 12, gap: 7 }}>
-            <Text style={{ color: colors.muted }}>Sunshine Computer Solution</Text>
-            <Text>Booking ID: {b.id}</Text>
-            <Text>Customer: {user.name}</Text>
-            <Text>Customer phone: {b.bookingPhone || '—'}</Text>
-            <Text>Service: {b.service}</Text>
-            <Text>Technician: {b.technician?.name || 'Not assigned'}</Text>
-            <Text>Booking date: {b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN') : '—'}</Text>
-            <Text>Service date/time: {b.when}</Text>
-            <Text>Address: {b.address}</Text>
-            <Text>Payment method: {String(b.paymentMethod || '—').toUpperCase()}</Text>
-            <Text>Payment status: {String(b.paymentStatus || 'pending').toUpperCase()}</Text>
-            <Text>Payment date: {b.paymentPaidAt
-              ? new Date(b.paymentPaidAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
-              : b.paymentStatus === 'pending' ? 'Not paid yet' : 'Unavailable for this payment'}</Text>
-            <Text>Service fee: {receiptAmount(b.serviceFee)}</Text>
-            <Text>Parts estimate: {receiptAmount(b.partsEstimate)}</Text>
-            <Text>Discount: {receiptAmount(b.discount)}</Text>
-            <Text style={{ fontWeight: '800' }}>Total: {receiptAmount(b.total)}</Text>
-            {b.rawStatus === 'completed' && b.paymentStatus === 'paid'
-              ? <Text style={{ color: colors.teal, fontWeight: '700' }}>Service completed and payment verified.</Text>
-              : b.paymentStatus === 'refunded'
-                ? <Text style={{ color: colors.orange, fontWeight: '700' }}>Payment refunded.</Text>
-                : <Text style={{ color: colors.orange, fontWeight: '700' }}>Payment is pending verification. This is not a paid receipt.</Text>}
+            <ThemedText style={{ color: colors.muted }}>Sunshine Computer Solution</ThemedText>
+            <ThemedText>Booking ID: {b.id}</ThemedText>
+            <ThemedText>Customer: {user.name}</ThemedText>
+            <ThemedText>Customer phone: {b.bookingPhone || '—'}</ThemedText>
+            <ThemedText>Service: {b.service}</ThemedText>
+            <ThemedText>Technician: {b.technician?.name || 'Not assigned'}</ThemedText>
+            <ThemedText>Booking date: {b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN') : '—'}</ThemedText>
+            <ThemedText>Service date/time: {b.when}</ThemedText>
+            <ThemedText>Address: {b.address}</ThemedText>
+            {b.total == null ? (
+              <View style={{ marginTop: 8, gap: 7 }}>
+                <ThemedText>Payment status: {String(b.paymentStatus || 'pending').toUpperCase()}</ThemedText>
+                <ThemedText>Payment date: {b.paymentPaidAt ? new Date(b.paymentPaidAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Not paid yet'}</ThemedText>
+                <View style={{ backgroundColor: colors.input, borderRadius: 14, padding: 14, marginTop: 4 }}>
+                  <ThemedText style={{ color: colors.text, fontWeight: '800' }}>Final amount not available yet</ThemedText>
+                  <ThemedText style={{ color: colors.muted, marginTop: 4, lineHeight: 20 }}>The technician will inspect the service and confirm the final charges. The final amount will appear here after it has been added.</ThemedText>
+                </View>
+              </View>
+            ) : (
+              <View style={{ marginTop: 8, gap: 7 }}>
+                <ThemedText>Payment status: {String(b.paymentStatus || 'pending').toUpperCase()}</ThemedText>
+                {b.paymentPaidAt ? <ThemedText>Payment date: {new Date(b.paymentPaidAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</ThemedText> : null}
+                <ThemedText>Service fee: {receiptAmount(b.serviceFee)}</ThemedText>
+                <ThemedText>Parts: {receiptAmount(b.partsEstimate)}</ThemedText>
+                <ThemedText>Discount: {receiptAmount(b.discount)}</ThemedText>
+                <ThemedText style={{ fontWeight: '900', fontSize: 18 }}>Final amount: {receiptAmount(b.total)}</ThemedText>
+                {b.paymentStatus === 'paid' ? <ThemedText style={{ color: colors.teal, fontWeight: '800' }}>✓ Payment received</ThemedText> : <ThemedText style={{ color: colors.orange, fontWeight: '700' }}>Payment is pending.</ThemedText>}
+              </View>
+            )}
           </View>
         </Card>
 
         {b.photoUrls?.length ? <Card style={{ marginTop: 14 }}>
-          <Text style={{ fontWeight: '700', marginBottom: 10 }}>Photos for this booking</Text>
+          <ThemedText style={{ fontWeight: '700', marginBottom: 10 }}>Photos for this booking</ThemedText>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             {b.photoUrls.map((uri, index) => <Image key={`${uri}-${index}`} source={{ uri }} style={{ width: 82, height: 82, borderRadius: 10, marginRight: 8, marginBottom: 8 }} />)}
           </View>
@@ -119,11 +125,11 @@ export default function TrackBookingScreen({ navigation, route }) {
                         {done && <Ionicons name="checkmark" size={22} color="#fff" />}
                         {active && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: colors.orange }} />}
                       </View>
-                      {i < LABELS.length - 1 && <View style={{ flex: 1, width: 3, backgroundColor: done ? colors.teal : '#E6E1F3' }} />}
+                      {i < LABELS.length - 1 && <View style={{ flex: 1, width: 3, backgroundColor: done ? colors.teal : colors.border }} />}
                     </View>
                     <View style={{ marginLeft: 14, paddingTop: 2 }}>
-                      <Text style={{ fontSize: 17, fontWeight: active ? '700' : '500', color: active ? colors.teal : done ? colors.text : '#9AA3A9' }}>{label}</Text>
-                      {i === 0 ? <Text style={{ color: colors.muted, marginTop: 3 }}>{bookedAt}</Text> : null}
+                      <ThemedText style={{ fontSize: 17, fontWeight: active ? '700' : '500', color: active ? colors.teal : done ? colors.text : colors.muted }}>{label}</ThemedText>
+                      {i === 0 ? <ThemedText style={{ color: colors.muted, marginTop: 3 }}>{bookedAt}</ThemedText> : null}
                     </View>
                   </View>
                 </FadeIn>
@@ -141,25 +147,25 @@ export default function TrackBookingScreen({ navigation, route }) {
                   : <Ionicons name="person" size={30} color="#fff" />}
               </View>
               <View style={{ flex: 1, marginLeft: 14 }}>
-                <Text style={{ fontSize: 17, fontWeight: '700' }}>{b.technician.name}</Text>
-                <Text style={{ color: colors.muted, marginTop: 2 }}>{b.technician.role_title}</Text>
+                <ThemedText style={{ fontSize: 17, fontWeight: '700' }}>{b.technician.name}</ThemedText>
+                <ThemedText style={{ color: colors.muted, marginTop: 2 }}>{b.technician.role_title}</ThemedText>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                  <Ionicons name="star" size={14} color={colors.star} /><Text style={{ marginLeft: 4 }}>{b.technician.rating} rating</Text>
+                  <Ionicons name="star" size={14} color={colors.star} /><ThemedText style={{ marginLeft: 4 }}>{b.technician.rating} rating</ThemedText>
                 </View>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.muted} />
             </Card>
           </Press>
         ) : (
-          <Card style={{ marginTop: 12 }}><Text style={{ color: colors.muted }}>Technician details will appear here once one has been assigned.</Text></Card>
+          <Card style={{ marginTop: 12 }}><ThemedText style={{ color: colors.muted }}>Technician details will appear here once one has been assigned.</ThemedText></Card>
         )}
 
         <Press onPress={() => (b.rawStatus === 'completed' ? navigation.navigate('RateService', { booking: b }) : Alert.alert('Review unavailable', 'You can review the service after it has been completed.'))}
-          style={{ marginTop: 16, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.border, paddingVertical: 16, alignItems: 'center' }}>
-          <Text style={{ fontSize: 16, fontWeight: '500' }}>Rate service</Text>
+          style={{ marginTop: 16, backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border, paddingVertical: 16, alignItems: 'center' }}>
+          <ThemedText style={{ fontSize: 16, fontWeight: '500' }}>Rate service</ThemedText>
         </Press>
         {cancellable && (
-          <Text onPress={cancel} style={{ textAlign: 'center', color: '#E5484D', fontWeight: '600', marginTop: 18, fontSize: 15 }}>Cancel booking</Text>
+          <ThemedText onPress={cancel} style={{ textAlign: 'center', color: '#E5484D', fontWeight: '600', marginTop: 18, fontSize: 15 }}>Cancel booking</ThemedText>
         )}
       </ScrollView>
     </Screen>

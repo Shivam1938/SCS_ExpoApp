@@ -1,483 +1,131 @@
-// import React, { useEffect, useState } from 'react';
-// import { api } from '../services/api';
-// import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-// import { colors } from '../theme';
-// import AllServicesScreen from '../screens/AllServicesScreen';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import MainTabs from './MainTabs';
-// import WelcomeScreen from '../screens/WelcomeScreen';
-// import LoginScreen from '../screens/LoginScreen';
-// import SignupScreen from '../screens/SignupScreen';
-// import ServiceDetailScreen from '../screens/ServiceDetailScreen';
-// import BookServiceScreen from '../screens/BookServiceScreen';
-// import PaymentScreen from '../screens/PaymentScreen';
-// import BookingConfirmedScreen from '../screens/BookingConfirmedScreen';
-// import TrackBookingScreen from '../screens/TrackBookingScreen';
-// import TechnicianProfileScreen from '../screens/TechnicianProfileScreen';
-// import RateServiceScreen from '../screens/RateServiceScreen';
-// import AddressesScreen from '../screens/AddressesScreen';
-// import AddAddressScreen from '../screens/AddAddressScreen';
-// import AddPhoneScreen from '../screens/AddPhoneScreen';
-// import BookmarksScreen from '../screens/BookmarksScreen';
-// import ProfileInfoScreen from '../screens/ProfileInfoScreen';
-
-// import ResetPasswordScreen from "../screens/ResetPasswordScreen";
-
-// const Stack = createNativeStackNavigator();
-// const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: colors.bg, card: colors.bg } };
-
-// export default function RootNavigator({ onReady }) {
-//   const [initial, setInitial] = useState(null);
-//   useEffect(() => {
-//     api.getSession().then((s) => setInitial(s ? 'Main' : 'Welcome')).catch(() => setInitial('Welcome'));
-//   }, []);
-//   if (!initial) return null;
-//   return (
-//     <NavigationContainer theme={theme} onReady={onReady}>
-//       <Stack.Navigator initialRouteName={initial} screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: colors.bg } }}>
-//         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ animation: 'fade' }} />
-//         <Stack.Screen name="Login" component={LoginScreen} />
-//         <Stack.Screen name="Signup" component={SignupScreen} />
-//         <Stack.Screen name="Main" component={MainTabs} options={{ animation: 'fade' }} />
-//         <Stack.Screen name="AllServices" component={AllServicesScreen} />
-//         <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
-//         <Stack.Screen name="BookService" component={BookServiceScreen} />
-//         <Stack.Screen name="Payment" component={PaymentScreen} />
-//         <Stack.Screen name="BookingConfirmed" component={BookingConfirmedScreen} options={{ gestureEnabled: false, animation: 'fade' }} />
-//         <Stack.Screen name="TrackBooking" component={TrackBookingScreen} />
-//         <Stack.Screen name="TechnicianProfile" component={TechnicianProfileScreen} />
-//         <Stack.Screen name="RateService" component={RateServiceScreen} />
-//         <Stack.Screen name="Addresses" component={AddressesScreen} />
-//         <Stack.Screen name="AddAddress" component={AddAddressScreen} />
-//         <Stack.Screen name="AddPhone" component={AddPhoneScreen} />
-//         <Stack.Screen name="Bookmarks" component={BookmarksScreen} />
-//         <Stack.Screen name="HelpSupport" component={ProfileInfoScreen} initialParams={{ page: 'help' }} />
-//         <Stack.Screen name="AboutUs" component={ProfileInfoScreen} initialParams={{ page: 'about' }} />
-//         <Stack.Screen name="ContactUs" component={ProfileInfoScreen} initialParams={{ page: 'contact' }} />
-//         <Stack.Screen name="PrivacyPolicy" component={ProfileInfoScreen} initialParams={{ page: 'privacy' }} />
-//         <Stack.Screen name="TermsConditions" component={ProfileInfoScreen} initialParams={{ page: 'terms' }} />
-//         <Stack.Screen name="CancellationRefundPolicy" component={ProfileInfoScreen} initialParams={{ page: 'cancellation' }} />
-//         <Stack.Screen name="ServicePolicy" component={ProfileInfoScreen} initialParams={{ page: 'servicePolicy' }} />
-        
-//         <Stack.Screen
-//   name="ResetPassword"
-//   component={ResetPasswordScreen}
-//   options={{ headerShown: false }}
-// />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
-
-
-import React, { useEffect, useState } from "react";
-import { Linking } from "react-native";
-import { api } from "../services/api";
-import { supabase } from "../services/supabase";
-import {
-  NavigationContainer,
-  DefaultTheme,
-} from "@react-navigation/native";
-import { colors } from "../theme";
-import AllServicesScreen from "../screens/AllServicesScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainTabs from "./MainTabs";
-import WelcomeScreen from "../screens/WelcomeScreen";
-import LoginScreen from "../screens/LoginScreen";
-import SignupScreen from "../screens/SignupScreen";
-import ServiceDetailScreen from "../screens/ServiceDetailScreen";
-import BookServiceScreen from "../screens/BookServiceScreen";
-import PaymentScreen from "../screens/PaymentScreen";
-import BookingConfirmedScreen from "../screens/BookingConfirmedScreen";
-import TrackBookingScreen from "../screens/TrackBookingScreen";
-import TechnicianProfileScreen from "../screens/TechnicianProfileScreen";
-import RateServiceScreen from "../screens/RateServiceScreen";
-import AddressesScreen from "../screens/AddressesScreen";
-import AddAddressScreen from "../screens/AddAddressScreen";
-import AddPhoneScreen from "../screens/AddPhoneScreen";
-import BookmarksScreen from "../screens/BookmarksScreen";
-import ProfileInfoScreen from "../screens/ProfileInfoScreen";
-import ResetPasswordScreen from "../screens/ResetPasswordScreen";
+import React, { useEffect, useRef, useState } from 'react';
+import { Linking } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import { api } from '../services/api';
+import { supabase } from '../services/supabase';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { colors } from '../theme';
+import { useTheme } from '../context/ThemeContext';
+import MainTabs from './MainTabs';
+import WelcomeScreen from '../screens/WelcomeScreen';
+import RoleSelectionScreen from '../screens/RoleSelectionScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/SignupScreen';
+import AllServicesScreen from '../screens/AllServicesScreen';
+import ServiceDetailScreen from '../screens/ServiceDetailScreen';
+import BookServiceScreen from '../screens/BookServiceScreen';
+import BookingConfirmedScreen from '../screens/BookingConfirmedScreen';
+import TrackBookingScreen from '../screens/TrackBookingScreen';
+import TechnicianProfileScreen from '../screens/TechnicianProfileScreen';
+import RateServiceScreen from '../screens/RateServiceScreen';
+import AddressesScreen from '../screens/AddressesScreen';
+import AddAddressScreen from '../screens/AddAddressScreen';
+import AddPhoneScreen from '../screens/AddPhoneScreen';
+import ChangeEmailScreen from '../screens/ChangeEmailScreen';
+import BookmarksScreen from '../screens/BookmarksScreen';
+import ProfileInfoScreen from '../screens/ProfileInfoScreen';
+import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import TechnicianBookingDetailsScreen from '../screens/TechnicianBookingDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: colors.bg,
-    card: colors.bg,
-  },
-};
-
+function ThemeAware({ component: Component, ...props }) {
+  useTheme();
+  return <Component {...props} />;
+}
 
 const getAuthParamsFromUrl = (url) => {
-  const fragment = url.includes("#")
-    ? url.split("#")[1]
-    : url.includes("?")
-      ? url.split("?")[1]
-      : "";
-
+  const fragment = url?.includes('#') ? url.split('#')[1] : url?.includes('?') ? url.split('?')[1] : '';
   if (!fragment) return null;
-
   const params = new URLSearchParams(fragment);
-
-  return {
-    accessToken: params.get("access_token"),
-    refreshToken: params.get("refresh_token"),
-    code: params.get("code"),
-    type: params.get("type"),
-  };
+  return { accessToken: params.get('access_token'), refreshToken: params.get('refresh_token'), code: params.get('code'), type: params.get('type') };
 };
 
 export default function RootNavigator({ onReady }) {
+  const { resolved } = useTheme();
   const [initial, setInitial] = useState(null);
-  const [navigationRef, setNavigationRef] = useState(null);
+  const navigationRef = useRef(null);
 
- useEffect(() => {
-  let mounted = true;
-
-  const handleRecoveryUrl = async (url) => {
-    if (!url || !url.startsWith("fixora://reset-password")) {
-      return false;
-    }
-
-    try {
-      const params = getAuthParamsFromUrl(url);
-
-      if (!params) {
-        console.warn("Password recovery link has no auth parameters.");
-        return false;
-      }
-
-      // PKCE recovery flow
-      if (params.code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          params.code
-        );
-
-        if (error) {
-          console.warn(
-            "Could not exchange password recovery code:",
-            error.message
-          );
-          return false;
+  useEffect(() => {
+    let mounted = true;
+    const exchange = async (url, kind) => {
+      const prefix = kind === 'reset' ? 'fixora://reset-password' : 'fixora://auth-callback';
+      if (!url?.startsWith(prefix)) return false;
+      try {
+        const params = getAuthParamsFromUrl(url);
+        if (!params) return false;
+        if (params.code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(params.code);
+          return !error;
         }
-
-        return true;
-      }
-
-      // Legacy/hash recovery flow
-      if (params.accessToken && params.refreshToken) {
-        const { error } = await supabase.auth.setSession({
-          access_token: params.accessToken,
-          refresh_token: params.refreshToken,
-        });
-
-        if (error) {
-          console.warn(
-            "Could not restore password recovery session:",
-            error.message
-          );
-          return false;
+        if (params.accessToken && params.refreshToken) {
+          const { error } = await supabase.auth.setSession({ access_token: params.accessToken, refresh_token: params.refreshToken });
+          return !error;
         }
-
-        return true;
-      }
-
-      console.warn("Password recovery link did not contain a valid session.");
+      } catch (error) { console.warn(`Could not process ${kind} link:`, error?.message); }
       return false;
-    } catch (error) {
-      console.warn(
-        "Could not process password recovery link:",
-        error?.message
-      );
-      return false;
-    }
-  };
+    };
+    const setup = async () => {
+      try {
+        const initialUrl = await Linking.getInitialURL();
+        if (await exchange(initialUrl, 'reset')) { if (mounted) setInitial('ResetPassword'); return; }
+        if (await exchange(initialUrl, 'auth')) { if (mounted) setInitial('Login'); return; }
+        const session = await api.getSession();
+        if (mounted) setInitial(session ? 'Main' : 'Welcome');
+      } catch { if (mounted) setInitial('Welcome'); }
+    };
+    setup();
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY' && mounted) setInitial('ResetPassword');
+    });
+    const notificationSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data || {};
+      const bookingId = data.booking_id || data.bookingId;
+      if (!bookingId || !navigationRef.current) return;
+      api.getProfile().then((profile) => {
+        navigationRef.current?.navigate(profile?.role === 'technician' ? 'TechnicianBookingDetails' : 'TrackBooking', { id: bookingId });
+      }).catch(() => {});
+    });
 
-  const handleAuthCallbackUrl = async (url) => {
-  if (!url || !url.startsWith("fixora://auth-callback")) {
-    return false;
-  }
+    const subscription = Linking.addEventListener('url', async ({ url }) => {
+      if (await exchange(url, 'reset') && navigationRef.current) return navigationRef.current.navigate('ResetPassword');
+      if (await exchange(url, 'auth') && navigationRef.current) navigationRef.current.navigate('Login');
+    });
+    return () => { mounted = false; subscription.remove(); notificationSubscription.remove(); authListener.subscription.unsubscribe(); };
+  }, []);
 
-  try {
-    const params = getAuthParamsFromUrl(url);
-
-    if (!params) {
-      console.warn("Email confirmation link has no auth parameters.");
-      return false;
-    }
-
-    if (params.code) {
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        params.code
-      );
-
-      if (error) {
-        console.warn(
-          "Could not exchange email confirmation code:",
-          error.message
-        );
-        return false;
-      }
-
-      return true;
-    }
-
-    if (params.accessToken && params.refreshToken) {
-      const { error } = await supabase.auth.setSession({
-        access_token: params.accessToken,
-        refresh_token: params.refreshToken,
-      });
-
-      if (error) {
-        console.warn(
-          "Could not restore email confirmation session:",
-          error.message
-        );
-        return false;
-      }
-
-      return true;
-    }
-
-    return false;
-  } catch (error) {
-    console.warn(
-      "Could not process email confirmation link:",
-      error?.message
-    );
-    return false;
-  }
-};
-
-  const setup = async () => {
-    try {
-      const initialUrl = await Linking.getInitialURL();
-
-      if (initialUrl) {
-        const recoveryHandled = await handleRecoveryUrl(initialUrl);
-
-        if (recoveryHandled) {
-          if (mounted) {
-            setInitial("ResetPassword");
-          }
-          return;
-        }
-      }
-
-      const authCallbackHandled = await handleAuthCallbackUrl(initialUrl);
-
-if (authCallbackHandled) {
-  if (mounted) {
-    setInitial("Login");
-  }
-  return;
-}
-
-      const session = await api.getSession();
-
-      if (mounted) {
-        setInitial(session ? "Main" : "Welcome");
-      }
-    } catch {
-      if (mounted) {
-        setInitial("Welcome");
-      }
-    }
-  };
-
-  setup();
-
-  // Handle password recovery event from Supabase
-  const { data: authListener } = supabase.auth.onAuthStateChange(
-    (event) => {
-      if (event === "PASSWORD_RECOVERY" && mounted) {
-        setInitial("ResetPassword");
-      }
-    }
-  );
-
-  // Handle deep links while the app is already running
-  // const subscription = Linking.addEventListener(
-  //   "url",
-  //   async ({ url }) => {
-  //     const recoveryHandled = await handleRecoveryUrl(url);
-
-  //     if (recoveryHandled && navigationRef) {
-  //       navigationRef.navigate("ResetPassword");
-  //     }
-  //   }
-  // );
-
-  const subscription = Linking.addEventListener(
-  "url",
-  async ({ url }) => {
-    const recoveryHandled = await handleRecoveryUrl(url);
-
-    if (recoveryHandled && navigationRef) {
-      navigationRef.navigate("ResetPassword");
-      return;
-    }
-
-    const authCallbackHandled = await handleAuthCallbackUrl(url);
-
-    if (authCallbackHandled && navigationRef) {
-      navigationRef.navigate("Login");
-    }
-  }
-);
-
-  return () => {
-    mounted = false;
-    subscription.remove();
-    authListener.subscription.unsubscribe();
-  };
-}, [navigationRef]);
   if (!initial) return null;
-
+  const theme = { ...DefaultTheme, dark: resolved === 'dark', colors: { ...DefaultTheme.colors, primary: colors.teal, background: colors.bg, card: colors.card, text: colors.text, border: colors.border } };
   return (
-    <NavigationContainer
-      theme={theme}
-      ref={(ref) => setNavigationRef(ref)}
-      onReady={onReady}
-    >
-      <Stack.Navigator
-        initialRouteName={initial}
-        screenOptions={{
-          headerShown: false,
-          animation: "slide_from_right",
-          contentStyle: { backgroundColor: colors.bg },
-        }}
-      >
-        <Stack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
-          options={{ animation: "fade" }}
-        />
-
-        <Stack.Screen name="Login" component={LoginScreen} />
-
-        <Stack.Screen name="Signup" component={SignupScreen} />
-
-        <Stack.Screen
-          name="Main"
-          component={MainTabs}
-          options={{ animation: "fade" }}
-        />
-
-        <Stack.Screen
-          name="AllServices"
-          component={AllServicesScreen}
-        />
-
-        <Stack.Screen
-          name="ServiceDetail"
-          component={ServiceDetailScreen}
-        />
-
-        <Stack.Screen
-          name="BookService"
-          component={BookServiceScreen}
-        />
-
-        <Stack.Screen
-          name="Payment"
-          component={PaymentScreen}
-        />
-
-        <Stack.Screen
-          name="BookingConfirmed"
-          component={BookingConfirmedScreen}
-          options={{
-            gestureEnabled: false,
-            animation: "fade",
-          }}
-        />
-
-        <Stack.Screen
-          name="TrackBooking"
-          component={TrackBookingScreen}
-        />
-
-        <Stack.Screen
-          name="TechnicianProfile"
-          component={TechnicianProfileScreen}
-        />
-
-        <Stack.Screen
-          name="RateService"
-          component={RateServiceScreen}
-        />
-
-        <Stack.Screen
-          name="Addresses"
-          component={AddressesScreen}
-        />
-
-        <Stack.Screen
-          name="AddAddress"
-          component={AddAddressScreen}
-        />
-
-        <Stack.Screen
-          name="AddPhone"
-          component={AddPhoneScreen}
-        />
-
-        <Stack.Screen
-          name="Bookmarks"
-          component={BookmarksScreen}
-        />
-
-        <Stack.Screen
-          name="HelpSupport"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "help" }}
-        />
-
-        <Stack.Screen
-          name="AboutUs"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "about" }}
-        />
-
-        <Stack.Screen
-          name="ContactUs"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "contact" }}
-        />
-
-        <Stack.Screen
-          name="PrivacyPolicy"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "privacy" }}
-        />
-
-        <Stack.Screen
-          name="TermsConditions"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "terms" }}
-        />
-
-        <Stack.Screen
-          name="CancellationRefundPolicy"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "cancellation" }}
-        />
-
-        <Stack.Screen
-          name="ServicePolicy"
-          component={ProfileInfoScreen}
-          initialParams={{ page: "servicePolicy" }}
-        />
-
-        <Stack.Screen
-          name="ResetPassword"
-          component={ResetPasswordScreen}
-          options={{ headerShown: false }}
-        />
+    <NavigationContainer theme={theme} ref={navigationRef} onReady={onReady}>
+      <Stack.Navigator initialRouteName={initial} screenOptions={{ headerShown: false, animation: 'slide_from_right', contentStyle: { backgroundColor: colors.bg } }}>
+        <Stack.Screen name="Welcome" children={(props) => <ThemeAware component={WelcomeScreen} {...props} />} options={{ animation: 'fade' }} />
+        <Stack.Screen name="RoleSelection" children={(props) => <ThemeAware component={RoleSelectionScreen} {...props} />} />
+        <Stack.Screen name="Login" children={(props) => <ThemeAware component={LoginScreen} {...props} />} />
+        <Stack.Screen name="Signup" children={(props) => <ThemeAware component={SignupScreen} {...props} />} />
+        <Stack.Screen name="Main" children={(props) => <ThemeAware component={MainTabs} {...props} />} options={{ animation: 'fade' }} />
+        <Stack.Screen name="AllServices" children={(props) => <ThemeAware component={AllServicesScreen} {...props} />} />
+        <Stack.Screen name="ServiceDetail" children={(props) => <ThemeAware component={ServiceDetailScreen} {...props} />} />
+        <Stack.Screen name="BookService" children={(props) => <ThemeAware component={BookServiceScreen} {...props} />} />
+        <Stack.Screen name="BookingConfirmed" children={(props) => <ThemeAware component={BookingConfirmedScreen} {...props} />} options={{ gestureEnabled: false, animation: 'fade' }} />
+        <Stack.Screen name="TrackBooking" children={(props) => <ThemeAware component={TrackBookingScreen} {...props} />} />
+        <Stack.Screen name="TechnicianProfile" children={(props) => <ThemeAware component={TechnicianProfileScreen} {...props} />} />
+        <Stack.Screen name="TechnicianBookingDetails" children={(props) => <ThemeAware component={TechnicianBookingDetailsScreen} {...props} />} />
+        <Stack.Screen name="RateService" children={(props) => <ThemeAware component={RateServiceScreen} {...props} />} />
+        <Stack.Screen name="Addresses" children={(props) => <ThemeAware component={AddressesScreen} {...props} />} />
+        <Stack.Screen name="AddAddress" children={(props) => <ThemeAware component={AddAddressScreen} {...props} />} />
+        <Stack.Screen name="AddPhone" children={(props) => <ThemeAware component={AddPhoneScreen} {...props} />} />
+        <Stack.Screen name="ChangeEmail" children={(props) => <ThemeAware component={ChangeEmailScreen} {...props} />} />
+        <Stack.Screen name="Bookmarks" children={(props) => <ThemeAware component={BookmarksScreen} {...props} />} />
+        <Stack.Screen name="HelpSupport" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'help' }} />
+        <Stack.Screen name="AboutUs" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'about' }} />
+        <Stack.Screen name="ContactUs" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'contact' }} />
+        <Stack.Screen name="PrivacyPolicy" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'privacy' }} />
+        <Stack.Screen name="TermsConditions" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'terms' }} />
+        <Stack.Screen name="CancellationRefundPolicy" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'cancellation' }} />
+        <Stack.Screen name="ServicePolicy" children={(props) => <ThemeAware component={ProfileInfoScreen} {...props} />} initialParams={{ page: 'servicePolicy' }} />
+        <Stack.Screen name="ResetPassword" children={(props) => <ThemeAware component={ResetPasswordScreen} {...props} />} />
       </Stack.Navigator>
     </NavigationContainer>
   );

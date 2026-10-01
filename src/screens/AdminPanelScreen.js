@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { colors, radius } from '../theme';
-import { Screen, Card, Press } from '../components/ui';
+import { Screen, Card, Press, ThemedText } from '../components/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../services/supabase';
 
@@ -45,10 +45,10 @@ export default function AdminPanelScreen() {
   };
 
   return (
-    <Screen edges={['top']} style={{ flex: 1, backgroundColor: '#fff' }}>
+    <Screen edges={['top']} style={{ flex: 1, backgroundColor: colors.surface }}>
       <View style={{ padding: 20, flex: 1 }}>
-        <Text style={styles.header}>Admin Dashboard</Text>
-        <Text style={styles.muted}>Manage all customer service requests and update statuses.</Text>
+        <ThemedText style={styles.header}>Admin Dashboard</ThemedText>
+        <ThemedText style={styles.muted}>Manage all customer service requests and update statuses.</ThemedText>
 
         {loading ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -57,7 +57,7 @@ export default function AdminPanelScreen() {
         ) : bookings.length === 0 ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Ionicons name="construct-outline" size={50} color={colors.muted} />
-            <Text style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>No service requests found!</Text>
+            <ThemedText style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>No service requests found!</ThemedText>
           </View>
         ) : (
           <FlatList
@@ -67,29 +67,29 @@ export default function AdminPanelScreen() {
             renderItem={({ item }) => (
               <Card style={styles.card}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <Text style={styles.userIdText}>User ID: {item.user_id}</Text>
-                  <Text style={[styles.statusBadge, { color: item.status === 'Pending' ? colors.orange : colors.teal }]}>
+                  <ThemedText style={styles.userIdText}>User ID: {item.user_id}</ThemedText>
+                  <ThemedText style={[styles.statusBadge, { color: item.status === 'Pending' ? colors.orange : colors.teal }]}>
                     {item.status}
-                  </Text>
+                  </ThemedText>
                 </View>
 
-                <Text style={styles.dateText}>
+                <ThemedText style={styles.dateText}>
                   <Ionicons name="calendar-outline" size={14} /> {new Date(item.booking_date).toLocaleString()}
-                </Text>
+                </ThemedText>
 
                 <View style={{ marginTop: 12, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Press 
                     onPress={() => updateStatus(item.id, 'Technician Assigned')}
                     style={[styles.actionBtn, { backgroundColor: colors.teal }]}
                   >
-                    <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>Assign Tech</Text>
+                    <ThemedText style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>Assign Tech</ThemedText>
                   </Press>
 
                   <Press 
                     onPress={() => updateStatus(item.id, 'Completed')}
                     style={[styles.actionBtn, { backgroundColor: '#2A3640' }]}
                   >
-                    <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>Complete</Text>
+                    <ThemedText style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>Complete</ThemedText>
                   </Press>
                 </View>
               </Card>
@@ -104,7 +104,7 @@ export default function AdminPanelScreen() {
 const styles = StyleSheet.create({
   header: { fontSize: 22, fontWeight: 'bold', marginBottom: 5 },
   muted: { color: colors.muted, fontSize: 14, marginBottom: 10 },
-  card: { padding: 16, marginBottom: 15, borderWidth: 1, borderColor: '#E6ECEE' },
+  card: { padding: 16, marginBottom: 15, borderWidth: 1, borderColor: colors.border },
   userIdText: { fontSize: 15, fontWeight: '700', color: colors.text },
   statusBadge: { fontSize: 12, fontWeight: '800' },
   dateText: { fontSize: 13, color: colors.muted, marginTop: 4 },

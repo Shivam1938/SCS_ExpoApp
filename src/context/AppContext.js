@@ -1,5 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import { supabase } from '../services/supabase';
 import { api } from '../services/api';
 
@@ -7,7 +10,7 @@ const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
 
 export function AppProvider({ children }) {
-  const [user, setUser] = useState({ name: 'Guest', phone: '', city: '', avatarUrl: null });
+  const [user, setUser] = useState({ name: 'Guest', email: '', phone: '', city: '', avatarUrl: null, role: 'customer' });
   const [bookings, setBookings] = useState([]);
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
@@ -31,9 +34,11 @@ export function AppProvider({ children }) {
     setUser((current) => ({
       ...current,
       name: profile.full_name || 'Guest',
+      email: profile.email || current.email || '',
       phone: profile.phone || '',
       city: profile.city || '',
       avatarUrl: profile.avatar_url || null,
+      role: profile.role || 'customer',
     }));
   }, []);
 
@@ -106,6 +111,34 @@ export function AppProvider({ children }) {
     }
   };
 
+  const registerPushNotifications = useCallback(async () => {
+    if (!Device.isDevice) return;
+    // Android remote push requires native FCM configuration. Do not attempt
+    // registration when this build intentionally has no Firebase/FCM setup.
+    if (Platform.OS === 'android' && !Constants.expoConfig?.android?.googleServicesFile) return;
+    try {
+      if (Platform.OS === 'android') {
+        await Notifications.deleteNotificationChannelAsync('default').catch(() => {});
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'SCS Notifications',
+          importance: Notifications.AndroidImportance.HIGH,
+          vibrationPattern: [0, 250, 250, 250],
+        });
+      }
+      const permissions = await Notifications.getPermissionsAsync();
+      let status = permissions.status;
+      if (status !== 'granted') {
+        const requested = await Notifications.requestPermissionsAsync();
+        status = requested.status;
+      }
+      if (status !== 'granted') return;
+      const token = await Notifications.getExpoPushTokenAsync({ projectId: '04873b85-dac3-4967-b0bd-5550de3e422e' });
+      if (token?.data) await api.savePushToken(token.data);
+    } catch (error) {
+      console.warn('Push notification registration failed:', error?.message);
+    }
+  }, []);
+
   useEffect(() => {
     let channel = null;
     const start = () => {
@@ -119,17 +152,17 @@ export function AppProvider({ children }) {
         .subscribe();
     };
     const stop = () => { if (channel) { supabase.removeChannel(channel); channel = null; } };
-    supabase.auth.getSession().then(({ data }) => { if (data.session) { refresh(); start(); } });
+    supabase.auth.getSession().then(({ data }) => { if (data.session) { refresh(); start(); registerPushNotifications(); } });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) { refresh(); start(); } else {
-      stop(); setBookings([]); setBookingsLoading(false); setBookingsError(''); setServices([]); setServicesLoading(false); setServicesError(''); setAlerts([]); setAlertsLoading(false); setAlertsError(''); setBookmarks([]); setBookmarksError(''); setPendingBookmarks([]); pendingBookmarkIds.current.clear(); setSelectedAddress(null); setUser({ name: 'Guest', phone: '', city: '', avatarUrl: null });
+      if (session) { refresh(); start(); registerPushNotifications(); } else {
+      stop(); setBookings([]); setBookingsLoading(false); setBookingsError(''); setServices([]); setServicesLoading(false); setServicesError(''); setAlerts([]); setAlertsLoading(false); setAlertsError(''); setBookmarks([]); setBookmarksError(''); setPendingBookmarks([]); pendingBookmarkIds.current.clear(); setSelectedAddress(null); setUser({ name: 'Guest', email: '', phone: '', city: '', avatarUrl: null, role: 'customer' });
       }
     });
     const appStateSub = AppState.addEventListener('change', (state) => {
       if (state === 'active') refreshProfile().catch((error) => console.warn('profile refresh failed', error?.message));
     });
     return () => { stop(); sub.subscription.unsubscribe(); appStateSub.remove(); };
-  }, [refresh, refreshProfile]);
+  }, [refresh, refreshProfile, registerPushNotifications]);
 
   const addBooking = (b) => setBookings((prev) => [b, ...prev.filter((x) => x.id !== b.id)]);
   const markAllRead = async () => {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Header, Card, Press } from '../components/ui';
+import { Screen, Header, Card, Press, ThemedText } from '../components/ui';
 import { colors, radius } from '../theme';
 
 const legalPage = (title) => ({
@@ -52,26 +52,26 @@ export default function ProfileInfoScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 32 }}>
         {isPlaceholder && <View style={{ backgroundColor: colors.orangeSoft, borderRadius: radius.md, padding: 13, marginBottom: 14, flexDirection: 'row', alignItems: 'center' }}>
           <Ionicons name="alert-circle-outline" size={20} color={colors.orange} />
-          <Text style={{ color: colors.text, fontWeight: '700', marginLeft: 9, flex: 1 }}>Placeholder copy — replace before publishing</Text>
+          <ThemedText style={{ color: colors.text, fontWeight: '700', marginLeft: 9, flex: 1 }}>Placeholder copy — replace before publishing</ThemedText>
         </View>}
-        <Text style={{ color: colors.muted, fontSize: 15, lineHeight: 23, marginBottom: 14 }}>{page.intro}</Text>
+        <ThemedText style={{ color: colors.muted, fontSize: 15, lineHeight: 23, marginBottom: 14 }}>{page.intro}</ThemedText>
 
         {page.faqs?.map((item) => <Card key={item.q} style={{ marginBottom: 12 }}>
-          <Text style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>{item.q}</Text>
-          <Text style={{ color: colors.muted, lineHeight: 22, marginTop: 8 }}>{item.a}</Text>
+          <ThemedText style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>{item.q}</ThemedText>
+          <ThemedText style={{ color: colors.muted, lineHeight: 22, marginTop: 8 }}>{item.a}</ThemedText>
         </Card>)}
 
         {page.sections?.map((item) => <Card key={item.heading} style={{ marginBottom: 12 }}>
-          <Text style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>{item.heading}</Text>
-          <Text style={{ color: colors.muted, lineHeight: 22, marginTop: 8 }}>{item.body}</Text>
+          <ThemedText style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>{item.heading}</ThemedText>
+          <ThemedText style={{ color: colors.muted, lineHeight: 22, marginTop: 8 }}>{item.body}</ThemedText>
         </Card>)}
 
         {route.params?.page === 'help' && <>
           <Press onPress={() => navigation.navigate('ContactUs')} style={{ backgroundColor: colors.teal, borderRadius: radius.md, padding: 15, alignItems: 'center', marginTop: 4 }}>
-            <Text style={{ color: '#fff', fontWeight: '700' }}>Contact support</Text>
+            <ThemedText style={{ color: '#fff', fontWeight: '700' }}>Contact support</ThemedText>
           </Press>
           <Press onPress={() => Alert.alert('Report a problem', 'Support contact details have not been configured yet. Open Contact Us to see the details that still need to be added.', [{ text: 'Open Contact Us', onPress: () => navigation.navigate('ContactUs') }, { text: 'Close', style: 'cancel' }])} style={{ padding: 14, alignItems: 'center' }}>
-            <Text style={{ color: colors.teal, fontWeight: '700' }}>Report a problem</Text>
+            <ThemedText style={{ color: colors.teal, fontWeight: '700' }}>Report a problem</ThemedText>
           </Press>
         </>}
       </ScrollView>

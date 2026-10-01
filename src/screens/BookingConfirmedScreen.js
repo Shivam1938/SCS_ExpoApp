@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Card, Button, FadeIn, Pill } from '../components/ui';
+import { Screen, Card, Button, FadeIn, Pill, ThemedText } from '../components/ui';
 import { colors } from '../theme';
 
 export default function BookingConfirmedScreen({ navigation, route }) {
-  const { id, service, when, photoUploadError } = route.params;
+  const { id, service, when, address, photoUploadError } = route.params;
   const pop = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -24,29 +24,30 @@ export default function BookingConfirmedScreen({ navigation, route }) {
           </View>
         </Animated.View>
         <FadeIn delay={300} style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 30, fontWeight: '800', marginTop: 28, color: colors.text }}>Booking confirmed!</Text>
-          <Text style={{ color: colors.muted, fontSize: 16, marginTop: 8 }}>We're finding the best technician for you.</Text>
+          <ThemedText style={{ fontSize: 30, fontWeight: '800', marginTop: 28, color: colors.text }}>Booking confirmed!</ThemedText>
+          <ThemedText style={{ color: colors.muted, fontSize: 16, marginTop: 8, textAlign: 'center' }}>We're finding an available technician for you. You will be notified when one accepts the job.</ThemedText>
         </FadeIn>
       </View>
       <FadeIn delay={450}>
-        {photoUploadError ? <View style={{ backgroundColor: colors.orangeSoft, borderRadius: 12, padding: 12, marginTop: 22 }}><Text style={{ color: colors.text }}>{photoUploadError}</Text></View> : null}
+        {photoUploadError ? <View style={{ backgroundColor: colors.orangeSoft, borderRadius: 12, padding: 12, marginTop: 22 }}><ThemedText style={{ color: colors.text }}>{photoUploadError}</ThemedText></View> : null}
         <Card style={{ marginTop: 30 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800' }}>{service}</Text>
-          <Text style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>{when}</Text>
-          <Text style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>12B, Lake View Road, Indiranagar</Text>
+          <ThemedText style={{ fontSize: 20, fontWeight: '800' }}>{service}</ThemedText>
+          <ThemedText style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>{when}</ThemedText>
+          <ThemedText style={{ color: colors.muted, marginTop: 10, fontSize: 16 }}>{address || 'Service address saved'}</ThemedText>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
-            <Text style={{ color: colors.muted }}>Booking ID</Text><Text style={{ fontWeight: '600' }}>{id}</Text>
+            <ThemedText style={{ color: colors.muted }}>Booking ID</ThemedText><ThemedText style={{ fontWeight: '600' }}>{id}</ThemedText>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.tealSoft, alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, marginTop: 14 }}>
             <Animated.View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.teal, marginRight: 8, transform: [{ scale: pulse }] }} />
-            <Text style={{ color: colors.teal, fontWeight: '600' }}>Finding technician</Text>
+            <ThemedText style={{ color: colors.teal, fontWeight: '600' }}>Finding technician</ThemedText>
           </View>
           <View style={{ backgroundColor: colors.tealSoft, borderRadius: 12, padding: 12, marginTop: 12, alignItems: 'center' }}>
-            <Text style={{ fontWeight: '700' }}>Priority matching enabled</Text>
+            <ThemedText style={{ fontWeight: '700' }}>Priority matching enabled</ThemedText>
           </View>
         </Card>
         <Button title="Track booking" style={{ marginTop: 24 }} onPress={() => navigation.navigate('TrackBooking', { id })} />
-        <Text style={{ textAlign: 'center', color: colors.muted, fontSize: 16, marginTop: 18 }} onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Main' }] })}>Back to home</Text>
+        <Button title="Go to bookings" variant="outline" style={{ marginTop: 12 }} onPress={() => navigation.navigate('Main', { screen: 'Bookings' })} />
+        <Button title="Back to home" variant="outline" style={{ marginTop: 12 }} onPress={() => navigation.navigate('Main', { screen: 'Home' })} />
       </FadeIn>
     </Screen>
   );

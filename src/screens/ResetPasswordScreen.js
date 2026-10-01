@@ -4,13 +4,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Text,
-  TextInput,
   View,
 } from "react-native";
-import { Screen, Button, Header, Press } from "../components/ui";
+import { Screen, Button, Header, Press, ThemedText, ThemedTextInput } from "../components/ui";
 import { colors, radius } from "../theme";
-import { supabase } from "../services/supabase";
+import { api } from '../services/api';
 
 export default function ResetPasswordScreen({ navigation }) {
   const [password, setPassword] = useState("");
@@ -36,11 +34,7 @@ export default function ResetPasswordScreen({ navigation }) {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password,
-      });
-
-      if (error) throw error;
+      await api.updatePassword(password);
 
       Alert.alert(
         "Password updated",
@@ -66,7 +60,7 @@ export default function ResetPasswordScreen({ navigation }) {
   };
 
   return (
-    <Screen style={{ backgroundColor: "#fff" }}>
+    <Screen style={{ backgroundColor: colors.surface }}>
       <Header
         title="Reset password"
         onBack={() => navigation.goBack()}
@@ -84,7 +78,7 @@ export default function ResetPasswordScreen({ navigation }) {
             paddingBottom: 36,
           }}
         >
-          <Text
+          <ThemedText
             style={{
               fontSize: 28,
               fontWeight: "800",
@@ -94,9 +88,9 @@ export default function ResetPasswordScreen({ navigation }) {
             }}
           >
             Set new password
-          </Text>
+          </ThemedText>
 
-          <Text
+          <ThemedText
             style={{
               color: colors.muted,
               fontSize: 16,
@@ -105,15 +99,15 @@ export default function ResetPasswordScreen({ navigation }) {
             }}
           >
             Enter a new password for your Sunshine Computer Solution account.
-          </Text>
+          </ThemedText>
 
-          <Text style={{ fontWeight: "700", marginBottom: 8 }}>
+          <ThemedText style={{ fontWeight: "700", marginBottom: 8 }}>
             New password
-          </Text>
+          </ThemedText>
 
           <View
             style={{
-              backgroundColor: "#F4F7F8",
+              backgroundColor: colors.input,
               borderRadius: radius.md,
               paddingHorizontal: 15,
               flexDirection: "row",
@@ -121,12 +115,12 @@ export default function ResetPasswordScreen({ navigation }) {
               marginBottom: 18,
             }}
           >
-            <TextInput
+            <ThemedTextInput
               value={password}
-              onChangeText={setPassword}
+              onChangeThemedText={setPassword}
               placeholder="Enter new password"
-              placeholderTextColor="#9AA3A9"
-              secureTextEntry={!showPassword}
+              placeholderThemedTextColor={colors.muted}
+              secureThemedTextEntry={!showPassword}
               autoCapitalize="none"
               style={{
   flex: 1,
@@ -140,19 +134,19 @@ export default function ResetPasswordScreen({ navigation }) {
               onPress={() => setShowPassword((shown) => !shown)}
               style={{ padding: 4 }}
             >
-              <Text style={{ color: colors.teal, fontWeight: "700" }}>
+              <ThemedText style={{ color: colors.teal, fontWeight: "700" }}>
                 {showPassword ? "Hide" : "Show"}
-              </Text>
+              </ThemedText>
             </Press>
           </View>
 
-          <Text style={{ fontWeight: "700", marginBottom: 8 }}>
+          <ThemedText style={{ fontWeight: "700", marginBottom: 8 }}>
             Confirm password
-          </Text>
+          </ThemedText>
 
           <View
             style={{
-              backgroundColor: "#F4F7F8",
+              backgroundColor: colors.input,
               borderRadius: radius.md,
               paddingHorizontal: 15,
               flexDirection: "row",
@@ -160,12 +154,12 @@ export default function ResetPasswordScreen({ navigation }) {
               marginBottom: 18,
             }}
           >
-            <TextInput
+            <ThemedTextInput
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              onChangeThemedText={setConfirmPassword}
               placeholder="Enter password again"
-              placeholderTextColor="#9AA3A9"
-              secureTextEntry={!showConfirmPassword}
+              placeholderThemedTextColor={colors.muted}
+              secureThemedTextEntry={!showConfirmPassword}
               autoCapitalize="none"
               style={{
   flex: 1,
@@ -181,14 +175,14 @@ export default function ResetPasswordScreen({ navigation }) {
               }
               style={{ padding: 4 }}
             >
-              <Text style={{ color: colors.teal, fontWeight: "700" }}>
+              <ThemedText style={{ color: colors.teal, fontWeight: "700" }}>
                 {showConfirmPassword ? "Hide" : "Show"}
-              </Text>
+              </ThemedText>
             </Press>
           </View>
 
           {!!error && (
-            <Text
+            <ThemedText
               accessibilityRole="alert"
               style={{
                 color: "#C0392B",
@@ -197,7 +191,7 @@ export default function ResetPasswordScreen({ navigation }) {
               }}
             >
               {error}
-            </Text>
+            </ThemedText>
           )}
 
           <Button
