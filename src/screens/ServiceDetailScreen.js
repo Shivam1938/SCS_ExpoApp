@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+// import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, ScrollView, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, Header, Card, IconBox, Button, FadeIn, Pill, Press, styles } from '../components/ui';
 import { colors, radius } from '../theme';
@@ -23,11 +24,32 @@ export default function ServiceDetailScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
         <FadeIn>
           <Card style={{ padding: 0, overflow: 'hidden' }}>
-            <View style={{ height: 200, backgroundColor: '#22303A', justifyContent: 'flex-end', padding: 16 }}>
+            {/* <View style={{ height: 200, backgroundColor: '#22303A', justifyContent: 'flex-end', padding: 16 }}>
               <View style={{ width: 76, height: 76, borderRadius: 20, backgroundColor: colors.orange, alignItems: 'center', justifyContent: 'center' }}>
                 <Ionicons name={s.icon} size={38} color="#fff" />
               </View>
-            </View>
+            </View> */}
+            <View style={{ height: 200, backgroundColor: '#22303A', justifyContent: 'flex-end', padding: 16 }}>
+  {s.image_url ? (
+    <Image
+      source={{ uri: s.image_url }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+      }}
+      resizeMode="cover"
+    />
+  ) : (
+    <View style={{ width: 76, height: 76, borderRadius: 20, backgroundColor: colors.orange, alignItems: 'center', justifyContent: 'center' }}>
+      <Ionicons name={s.icon} size={38} color="#fff" />
+    </View>
+  )}
+</View>
             <View style={{ padding: 18 }}>
               <Text style={{ fontSize: 26, fontWeight: '800', color: colors.text }}>{s.name}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>

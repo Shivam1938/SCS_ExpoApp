@@ -121,9 +121,20 @@ export default function HomeScreen({ navigation }) {
             <FadeIn key={s.id} delay={150 + i * 60} style={{ width: '48%', marginBottom: 12 }}>
               <Press onPress={() => open(s.id)}>
                 <Card style={{ padding: 0, overflow: 'hidden' }}>
-                  <View style={{ height: 84, backgroundColor: s.tint, alignItems: 'center', justifyContent: 'center' }}>
+                  {/* <View style={{ height: 84, backgroundColor: s.tint, alignItems: 'center', justifyContent: 'center' }}>
                     <Ionicons name={s.icon} size={38} color={s.color} />
-                  </View>
+                  </View> */}
+                  <View style={{ height: 84, backgroundColor: s.tint, alignItems: 'center', justifyContent: 'center' }}>
+  {s.image_url ? (
+    <Image
+      source={{ uri: s.image_url }}
+      style={{ width: '100%', height: '100%' }}
+      resizeMode="cover"
+    />
+  ) : (
+    <Ionicons name={s.icon} size={38} color={s.color} />
+  )}
+</View>
                   <View style={{ padding: 12 }}>
                     <Text numberOfLines={1} style={{ fontWeight: '700', color: colors.text, fontSize: 15 }}>{s.name}</Text>
                     <Text style={{ color: colors.muted, fontSize: 12, marginTop: 3 }}>From ₹{s.price}</Text>

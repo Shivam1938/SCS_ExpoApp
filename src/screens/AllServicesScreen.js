@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FlatList, Text, TextInput, View } from 'react-native';
+// import { FlatList, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, Header, Card, IconBox, Press } from '../components/ui';
 import { colors, radius } from '../theme';
@@ -27,7 +28,17 @@ export default function AllServicesScreen({ navigation }) {
         renderItem={({ item: s }) => (
           <Press onPress={() => navigation.navigate('ServiceDetail', { id: s.id })} style={{ marginBottom: 12 }}>
             <Card style={{ flexDirection: 'row', alignItems: 'center', padding: 14 }}>
-              <IconBox name={s.icon} tint={s.tint} color={s.color} size={58} />
+              {/* <IconBox name={s.icon} tint={s.tint} color={s.color} size={58} />
+               */}
+               {s.image_url ? (
+  <Image
+    source={{ uri: s.image_url }}
+    style={{ width: 58, height: 58, borderRadius: 12 }}
+    resizeMode="cover"
+  />
+) : (
+  <IconBox name={s.icon} tint={s.tint} color={s.color} size={58} />
+)}
               <View style={{ flex: 1, marginLeft: 14 }}>
                 <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text }}>{s.name}</Text>
                 <Text numberOfLines={2} style={{ color: colors.muted, marginTop: 3, fontSize: 13, lineHeight: 18 }}>{s.desc}</Text>

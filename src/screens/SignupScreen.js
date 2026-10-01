@@ -50,7 +50,7 @@ export default function SignupScreen({ navigation }) {
       <View style={{ backgroundColor: '#F4F7F8', borderRadius: radius.md, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <TextInput value={value} onChangeText={onChangeText} placeholder={isConfirm ? 'Re-enter your password' : 'At least 8 characters'}
           placeholderTextColor="#9AA3A9" secureTextEntry={!visible} textContentType="newPassword" autoCapitalize="none"
-          returnKeyType={isConfirm ? 'done' : 'next'} style={{ flex: 1, paddingVertical: 15, fontSize: 16 }} />
+          returnKeyType={isConfirm ? 'done' : 'next'}style={{ flex: 1, paddingVertical: 15, fontSize: 16, color: colors.text }} />
         <Press onPress={toggleVisibility} style={{ padding: 4 }}>
           <Ionicons name={visible ? 'eye-off-outline' : 'eye-outline'} size={22} color={colors.muted} />
         </Press>
@@ -61,7 +61,7 @@ export default function SignupScreen({ navigation }) {
   return (
     <Screen style={{ backgroundColor: '#fff' }}>
       <Header title="Create account" onBack={() => navigation.goBack()} />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 24, paddingBottom: 36 }}>
           <FadeIn style={{ alignItems: 'center', marginBottom: 24 }}>
             <Logo size={28} />

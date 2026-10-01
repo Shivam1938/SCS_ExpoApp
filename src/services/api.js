@@ -28,7 +28,8 @@ const authMessage = (error) => {
   )
     return "Choose a stronger password with at least 8 characters.";
   if (lower.includes("network") || lower.includes("fetch"))
-    return "Could not connect. Check your internet connection and try again.";
+    // return "Could not connect. Check your internet connection and try again.";
+  return `Connection error: ${message}`;
   return message;
 };
 const ensureProfile = async (user, name) => {

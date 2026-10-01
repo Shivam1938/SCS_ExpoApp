@@ -45,7 +45,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <Screen style={{ backgroundColor: '#fff' }}>
       <Header title="Sign in" onBack={() => navigation.goBack()} />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, padding: 24, paddingBottom: 36 }}>
           <FadeIn style={{ alignItems: 'center', marginBottom: 26 }}>
             <Logo size={30} />
@@ -62,7 +62,7 @@ export default function LoginScreen({ navigation }) {
           <View style={{ backgroundColor: '#F4F7F8', borderRadius: radius.md, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center' }}>
             <TextInput value={password} onChangeText={setPassword} placeholder="Enter your password" placeholderTextColor="#9AA3A9"
               secureTextEntry={!showPassword} textContentType="password" autoCapitalize="none"
-              onSubmitEditing={submit} returnKeyType="go" style={{ flex: 1, paddingVertical: 15, fontSize: 16 }} />
+              onSubmitEditing={submit} returnKeyType="go" style={{ flex: 1, paddingVertical: 15, fontSize: 16, color: colors.text }} />
             <Press onPress={() => setShowPassword((shown) => !shown)} style={{ padding: 4 }}>
               <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={22} color={colors.muted} />
             </Press>

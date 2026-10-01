@@ -58,10 +58,23 @@ export default function TechnicianProfileScreen({ navigation, route }) {
           <View style={{ backgroundColor: colors.tealSoft, borderRadius: radius.lg, padding: 16, marginTop: 16, alignItems: 'center' }}>
             <Text style={{ fontWeight: '700', textAlign: 'center' }}>{t.verified ? 'Verified Sunshine Computer Solution Pro • Background checked' : 'Sunshine Computer Solution technician'}</Text>
           </View>
-          <View style={{ flexDirection: 'row', marginTop: 16 }}>
+          {/* <View style={{ flexDirection: 'row', marginTop: 16 }}>
             <Button title="Call Technician" variant="teal" style={{ flex: 1, marginRight: 8, height: 50 }} onPress={() => openContact('tel:')} />
             <Button title="WhatsApp Technician" style={{ flex: 1, marginLeft: 8, height: 50 }} onPress={openWhatsApp} />
-          </View>
+          </View> */}
+          <View style={{ flexDirection: 'row', marginTop: 16 }}>
+  <Button
+    title="Call"
+    variant="teal"
+    style={{ flex: 1, marginRight: 6, height: 48 }}
+    onPress={() => openContact('tel:' + t.phone)}
+  />
+  <Button
+    title="Chat"
+    style={{ flex: 1, marginLeft: 6, height: 48 }}
+    onPress={openWhatsApp}
+  />
+</View>
           <Text style={[styles.h2, { marginTop: 22 }]}>About {t.name.split(' ')[0]}</Text>
           <Text style={{ color: colors.muted, marginTop: 8, fontSize: 16, lineHeight: 24 }}>{t.about}</Text>
           <Text style={[styles.h2, { marginTop: 22 }]}>Skills</Text>

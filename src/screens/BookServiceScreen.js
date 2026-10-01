@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, Text, View, TextInput, ActivityIndicator, Platform, Alert, Image } from 'react-native';
+import { ScrollView, Text, View, TextInput, ActivityIndicator, Platform, Alert, Image,  KeyboardAvoidingView, } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -67,13 +67,52 @@ export default function BookServiceScreen({ navigation, route }) {
 
   const bookingAddress = addresses.find((item) => item.id === selectedAddressId);
   const hasPhone = String(phone || '').replace(/\D/g, '').length >= 10;
-  const saveBookingPhone = () => {
-    if (!hasPhone) {
-      Alert.alert('Enter a valid contact number', 'Add at least 10 digits, then save the booking contact number.');
-      return;
-    }
-    setEditingPhone(false);
-  };
+  // const saveBookingPhone = () => {
+  //   if (!hasPhone) {
+  //     Alert.alert('Enter a valid contact number', 'Add at least 10 digits, then save the booking contact number.');
+  //     return;
+  //   }
+  //   setEditingPhone(false);
+  // };
+  
+  //with save button
+//  const saveBookingPhone = async () => {
+//   if (!hasPhone) {
+//     Alert.alert(
+//       'Enter a valid contact number',
+//       'Add at least 10 digits, then save the booking contact number.'
+//     );
+//     return;
+//   }
+
+//   try {
+//     const profile = await api.getProfile();
+
+//     await api.saveProfile({
+//       fullName: profile?.full_name || user.name || 'Customer',
+//       phone: phone.trim(),
+//     });
+
+//     setEditingPhone(false);
+//   } catch (error) {
+//     Alert.alert(
+//       'Could not save phone',
+//       error?.message || 'Please try again.'
+//     );
+//   }
+// };
+
+const saveBookingPhone = () => {
+  if (!hasPhone) {
+    Alert.alert(
+      'Enter a valid contact number',
+      'Add at least 10 digits, then continue.'
+    );
+    return;
+  }
+
+  setEditingPhone(false);
+};
   const scheduleIsValid = Number.isFinite(schedule.getTime()) && schedule.getTime() > Date.now();
   const onDateChange = (_event, value) => {
     if (Platform.OS === 'android') setShowDatePicker(false);
@@ -138,6 +177,10 @@ export default function BookServiceScreen({ navigation, route }) {
   return (
     <Screen>
       <Header title="Book a service" onBack={() => navigation.goBack()} />
+        <KeyboardAvoidingView
+  style={{ flex: 1 }}
+  behavior={Platform.OS === "ios" ? "padding" : "height"}
+>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         <FadeIn>
           <View style={{ backgroundColor: colors.tealSoft, borderRadius: radius.lg, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
@@ -192,9 +235,25 @@ export default function BookServiceScreen({ navigation, route }) {
         <Card style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           {editingPhone ? <TextInput autoFocus value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="Enter a contact number" style={{ flex: 1, color: colors.text, fontWeight: '700', paddingVertical: 6 }} />
             : <Text style={{ flex: 1, color: phone ? colors.text : colors.muted, fontWeight: '700', paddingVertical: 6 }}>{phone || 'Add a contact number'}</Text>}
-          <Press accessibilityRole="button" accessibilityLabel={editingPhone ? 'Save booking contact number' : 'Edit booking contact number'} onPress={editingPhone ? saveBookingPhone : () => setEditingPhone(true)} style={{ marginLeft: 12, paddingVertical: 8, paddingHorizontal: 12 }}>
+          {/* <Press accessibilityRole="button" accessibilityLabel={editingPhone ? 'Save booking contact number' : 'Edit booking contact number'} onPress={editingPhone ? saveBookingPhone : () => setEditingPhone(true)} style={{ marginLeft: 12, paddingVertical: 8, paddingHorizontal: 12 }}>
             <Text style={{ color: colors.teal, fontWeight: '700' }}>{editingPhone ? 'Save' : 'Edit'}</Text>
-          </Press>
+          </Press> */}
+          <Press
+  accessibilityRole="button"
+  accessibilityLabel="Edit booking contact number"
+  onPress={() => {
+    if (editingPhone) {
+      saveBookingPhone();
+    } else {
+      setEditingPhone(true);
+    }
+  }}
+  style={{ marginLeft: 12, paddingVertical: 8, paddingHorizontal: 12 }}
+>
+  <Text style={{ color: colors.teal, fontWeight: '700' }}>
+    Edit
+  </Text>
+</Press>
         </Card>
 
         <View style={{ backgroundColor: colors.tealSoft, borderRadius: radius.lg, padding: 16, marginTop: 16 }}>
@@ -225,6 +284,7 @@ export default function BookServiceScreen({ navigation, route }) {
         <Button title="Confirm booking" variant="teal" style={{ marginTop: 18 }}
           disabled={addressesLoading || !bookingAddress || !hasPhone || !scheduleIsValid} onPress={continueToPayment} />
       </ScrollView>
+      </KeyboardAvoidingView>
     </Screen>
   );
 }

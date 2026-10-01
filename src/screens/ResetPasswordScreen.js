@@ -129,10 +129,11 @@ export default function ResetPasswordScreen({ navigation }) {
               secureTextEntry={!showPassword}
               autoCapitalize="none"
               style={{
-                flex: 1,
-                paddingVertical: 15,
-                fontSize: 16,
-              }}
+  flex: 1,
+  paddingVertical: 15,
+  fontSize: 16,
+  color: colors.text,
+}}
             />
 
             <Press
@@ -167,10 +168,11 @@ export default function ResetPasswordScreen({ navigation }) {
               secureTextEntry={!showConfirmPassword}
               autoCapitalize="none"
               style={{
-                flex: 1,
-                paddingVertical: 15,
-                fontSize: 16,
-              }}
+  flex: 1,
+  paddingVertical: 15,
+  fontSize: 16,
+  color: colors.text,
+}}
             />
 
             <Press
